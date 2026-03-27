@@ -33,6 +33,27 @@
     gap: var(--sp-lg);
 }
 
+.menu-link {
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.menu-link:hover {
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+    background: rgba(0, 212, 255, 0.08);
+}
+
 .logo {
     font-family: var(--font-heading);
     font-size: 0.95rem;
@@ -170,7 +191,7 @@
 /* ─── Bottom Plot Strip ────────────────────────────────────────── */
 #plot-strip {
     height: var(--bottom-panel-height);
-    min-height: 220px;
+    min-height: 380px;
     border-top: 1px solid rgba(0, 212, 255, 0.1);
     background: rgba(6, 10, 16, 0.7);
     display: flex;

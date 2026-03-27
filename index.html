@@ -32,6 +32,7 @@
                 <button class="mode-tab active" data-mode="2D" id="tab-2d">2D RPM</button>
                 <button class="mode-tab locked" data-mode="3D" id="tab-3d" title="Coming in Phase 2">3D</button>
             </div>
+            <button class="menu-link" id="btn-about" title="About">About</button>
         </div>
         <div class="header-center">
             <div class="connection-badge" id="connection-badge">
@@ -42,7 +43,6 @@
         </div>
         <div class="header-right">
             <span class="text-dim" style="font-size:0.6rem; font-family: var(--font-mono);" id="sim-time-label">t = 0.000 s</span>
-            <button class="btn btn-ghost btn-sm" id="btn-about" title="About">ⓘ</button>
             <button class="btn btn-ghost btn-sm" id="btn-settings" title="Settings">⚙</button>
         </div>
     </header>
@@ -290,44 +290,14 @@
             <!-- Bottom Plot Strip -->
             <div id="plot-strip">
                 <div class="bottom-tabs">
-                    <button class="bottom-tab active" data-tab="plots">Live Plots</button>
-                    <button class="bottom-tab" data-tab="gravity">Gravity Vector</button>
                     <button class="bottom-tab" data-tab="fft">FFT Spectrum</button>
                     <button class="bottom-tab" data-tab="stokes">Stokes Analysis</button>
                 </div>
 
-                <!-- Live Plots Tab -->
-                <div class="bottom-tab-content active" data-tab-content="plots">
-                    <div class="plot-container">
-                        <span class="plot-title">g-Residual (%)</span>
-                        <canvas id="chart-gres"></canvas>
-                    </div>
-                    <div class="plot-container">
-                        <span class="plot-title">RPM (Setpoint vs Actual)</span>
-                        <canvas id="chart-rpm"></canvas>
-                    </div>
-                    <div class="plot-container">
-                        <span class="plot-title">Power (W)</span>
-                        <canvas id="chart-power"></canvas>
-                    </div>
-                </div>
-
-                <!-- Gravity Vector Tab -->
-                <div class="bottom-tab-content" data-tab-content="gravity">
-                    <div class="plot-container" style="flex:2">
-                        <span class="plot-title">Gravity Components (m/s²)</span>
-                        <canvas id="chart-gvec"></canvas>
-                    </div>
-                    <div class="plot-container">
-                        <span class="plot-title">g-Magnitude</span>
-                        <canvas id="chart-gmag"></canvas>
-                    </div>
-                </div>
-
                 <!-- FFT Tab -->
-                <div class="bottom-tab-content" data-tab-content="fft">
+                <div class="bottom-tab-content active" data-tab-content="fft">
                     <div class="plot-container" style="flex:1">
-                        <span class="plot-title">Vibration FFT Spectrum</span>
+                        <span class="plot-title">FFT Spectrum (g-residual)</span>
                         <canvas id="chart-fft"></canvas>
                     </div>
                 </div>
@@ -480,7 +450,7 @@
 <div id="toast-container"></div>
 
 <!-- ═══════════ ABOUT MODAL ═══════════ -->
-<div id="about-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px">
+<div id="about-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:20px">
     <div style="background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:12px; max-width:600px; width:100%; padding:30px; backdrop-filter:blur(12px); max-height:85vh; overflow-y:auto; box-shadow:0 0 40px rgba(0,212,255,0.2)">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
             <h2 style="font-family:var(--font-heading); font-size:1.5rem; color:var(--electric-cyan); margin:0; letter-spacing:2px">CLINOSTAT</h2>
