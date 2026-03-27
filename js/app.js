@@ -1132,23 +1132,6 @@ function showToast(msg, type = 'info') {
 function bindEvents() {
     const $ = id => document.getElementById(id);
 
-    // ─── Theme Toggle (Dark = default, Light = Microsoft-style) ───
-    const applyTheme = (theme) => {
-        const root = document.documentElement;
-        if (theme === 'light') root.setAttribute('data-theme', 'light');
-        else root.removeAttribute('data-theme');
-
-        // Ensure charts reflow after theme/layout changes
-        setTimeout(() => {
-            [chartGResTime, chartFFT, chartRPM, chartGVec, chartAngles].forEach(chart => {
-                if (chart && chart.resize) chart.resize();
-            });
-        }, 0);
-    };
-
-    // Initialize theme from localStorage
-    applyTheme(localStorage.getItem('clinosim-theme') || 'dark');
-
     // ─── Mode Tabs ───
     document.querySelectorAll('.mode-tab').forEach(tab => {
         tab.addEventListener('click', () => {
@@ -1374,17 +1357,6 @@ function bindEvents() {
         $('about-modal').style.display = 'flex';
     });
 
-    // Settings button toggles theme for now (Light <-> Dark)
-    const settingsBtn = $('btn-settings');
-    if (settingsBtn) {
-        settingsBtn.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-            const next = current === 'light' ? 'dark' : 'light';
-            localStorage.setItem('clinosim-theme', next);
-            applyTheme(next);
-            showToast(next === 'light' ? 'Light Mode enabled' : 'Dark Mode enabled', 'info');
-        });
-    }
 
     $('about-close').addEventListener('click', () => {
         $('about-modal').style.display = 'none';
@@ -1437,6 +1409,52 @@ document.addEventListener('DOMContentLoaded', () => {
     initCharts();
     bindEvents();
     requestAnimationFrame(animate);
+
+    // Theme bootstrap (also binds a fallback toggle handler)
+    (function themeBootstrap(){
+        const applyTheme = (theme) => {
+            const root = document.documentElement;
+            if (theme === 'light') root.setAttribute('data-theme', 'light');
+            else root.removeAttribute('data-theme');
+            console.log('[theme] applied:', theme);
+
+            setTimeout(() => {
+                [chartGResTime, chartFFT, chartRPM, chartGVec, chartAngles].forEach(chart => {
+                    if (chart && chart.resize) chart.resize();
+                });
+            }, 0);
+        };
+
+        const stored = localStorage.getItem('clinosim-theme') || 'dark';
+        applyTheme(stored);
+
+        const toggle = () => {
+            const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+            const next = current === 'light' ? 'dark' : 'light';
+            localStorage.setItem('clinosim-theme', next);
+            applyTheme(next);
+            if (typeof showToast === 'function') showToast(next === 'light' ? 'Light Mode enabled' : 'Dark Mode enabled', 'info');
+        };
+
+        const settingsBtn = document.getElementById('btn-settings');
+        if (settingsBtn && !settingsBtn.dataset.themeBound) {
+            settingsBtn.dataset.themeBound = '1';
+            settingsBtn.addEventListener('click', () => {
+                console.log('[theme] settings click');
+                toggle();
+            });
+        }
+
+        // Keyboard shortcut: press "L" to toggle light/dark
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'l' || e.key === 'L') {
+                // Avoid toggling while typing in inputs
+                const tag = (document.activeElement && document.activeElement.tagName) || '';
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+                toggle();
+            }
+        });
+    })();
 
     // Debug: Verify chart initialization
     console.log('%c📊 Chart Initialization Status ', 'background: #00D4FF; color: #000; font-size: 12px; padding: 6px 8px; border-radius: 3px; font-weight: bold;');
