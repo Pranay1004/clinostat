@@ -1411,61 +1411,117 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(animate);
 
     // ═══════════════════════════════════════════════════════════════════════
-    // THEME SYSTEM — Minimal, Bulletproof
+    // THEME SYSTEM
     // ═══════════════════════════════════════════════════════════════════════
     window.ThemeManager = {
-        _toggle: function() {
+        _currentTheme: 'dark',
+
+        _applyTheme: function(theme) {
             const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', next === 'light' ? 'light' : '');
-            if (next === 'light') html.setAttribute('data-theme', 'light');
-            else html.removeAttribute('data-theme');
-            
-            localStorage.setItem('clinosim-theme', next);
-            console.log('🎨 Theme toggled to:', next);
-            console.log('📌 HTML[data-theme]:', html.getAttribute('data-theme'));
-            
-            if (typeof showToast === 'function') {
-                showToast(`Switched to ${next} mode`, 'info');
-            }
-        },
-        
-        _init: function() {
-            const html = document.documentElement;
-            const stored = localStorage.getItem('clinosim-theme') || 'dark';
-            
-            if (stored === 'light') {
+            this._currentTheme = theme;
+
+            if (theme === 'light') {
                 html.setAttribute('data-theme', 'light');
             } else {
                 html.removeAttribute('data-theme');
             }
-            
-            console.log('🎨 Theme initialized:', stored);
-            console.log('📌 HTML[data-theme]:', html.getAttribute('data-theme'));
-            
-            // Bind settings button
-            const btn = document.getElementById('btn-settings');
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    console.log('⚙️  Settings button clicked');
+
+            // Update toggle button icon
+            const toggleBtn = document.getElementById('btn-theme-toggle');
+            if (toggleBtn) {
+                toggleBtn.textContent = theme === 'light' ? '☀️' : '🌙';
+                toggleBtn.title = theme === 'light' ? 'Switch to Dark Mode (L)' : 'Switch to Light Mode (L)';
+            }
+
+            // Update Three.js scene background
+            if (scene) {
+                if (theme === 'light') {
+                    scene.background = new THREE.Color(0xF0F0F0);
+                    scene.fog = new THREE.FogExp2(0xF0F0F0, 0.003);
+                    if (gridHelper) {
+                        gridHelper.material.color.set(0xCCCCCC);
+                        gridHelper.material.opacity = 0.3;
+                    }
+                } else {
+                    scene.background = new THREE.Color(0x060A10);
+                    scene.fog = new THREE.FogExp2(0x060A10, 0.003);
+                    if (gridHelper) {
+                        gridHelper.material.color.set(0x112233);
+                        gridHelper.material.opacity = 1.0;
+                    }
+                }
+            }
+
+            // Update Chart.js colors for readability
+            const chartTextColor = theme === 'light' ? '#616161' : '#556677';
+            const chartGridColor = theme === 'light' ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 212, 255, 0.05)';
+            const chartLegendColor = theme === 'light' ? '#616161' : '#8899AA';
+
+            [chartGResTime, chartFFT, chartRPM, chartGVec, chartAngles].forEach(chart => {
+                if (!chart) return;
+                try {
+                    // Update axes
+                    if (chart.options.scales) {
+                        Object.values(chart.options.scales).forEach(scale => {
+                            if (scale.ticks) scale.ticks.color = chartTextColor;
+                            if (scale.grid) scale.grid.color = chartGridColor;
+                            if (scale.title) scale.title.color = chartTextColor;
+                        });
+                    }
+                    // Update legend
+                    if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+                        chart.options.plugins.legend.labels.color = chartLegendColor;
+                    }
+                    chart.update('none');
+                } catch (e) {
+                    console.warn('Chart theme update error:', e);
+                }
+            });
+
+            localStorage.setItem('clinosim-theme', theme);
+            console.log('🎨 Theme applied:', theme);
+        },
+
+        _toggle: function() {
+            const next = this._currentTheme === 'light' ? 'dark' : 'light';
+            this._applyTheme(next);
+            showToast(`Switched to ${next} mode`, 'info');
+        },
+
+        _init: function() {
+            const stored = localStorage.getItem('clinosim-theme') || 'dark';
+            this._applyTheme(stored);
+
+            // Bind theme toggle button
+            const toggleBtn = document.getElementById('btn-theme-toggle');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
                     ThemeManager._toggle();
                 });
-            } else {
-                console.warn('⚠️  #btn-settings not found');
             }
-            
-            // Keyboard shortcut
+
+            // Bind settings button (also toggles theme for now)
+            const settingsBtn = document.getElementById('btn-settings');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    ThemeManager._toggle();
+                });
+            }
+
+            // Keyboard shortcut: L key
             window.addEventListener('keydown', (e) => {
-                if ((e.key === 'l' || e.key === 'L') && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
-                    console.log('⌨️  L key pressed');
+                if ((e.key === 'l' || e.key === 'L') && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
                     ThemeManager._toggle();
                 }
             });
         }
     };
-    
+
     ThemeManager._init();
+
+    // ─── Connection Panel periodic update ───
+    updateConnectionPanel();
+    setInterval(updateConnectionPanel, 2000);
 
     // Debug: Verify chart initialization
     console.log('%c📊 Chart Initialization Status ', 'background: #00D4FF; color: #000; font-size: 12px; padding: 6px 8px; border-radius: 3px; font-weight: bold;');
@@ -1479,3 +1535,4 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('%c ClinoSim Pro v1.0 ', 'background: #0066FF; color: white; font-size: 14px; padding: 4px 8px; border-radius: 4px;');
     console.log('Microgravity Digital Twin — PS4 Mission Ground Simulation');
 });
+

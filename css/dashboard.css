@@ -23,6 +23,7 @@
     background: rgba(6, 10, 16, 0.95);
     border-bottom: 1px solid rgba(0, 212, 255, 0.12);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 100;
     flex-shrink: 0;
 }
@@ -74,7 +75,7 @@
 .header-right {
     display: flex;
     align-items: center;
-    gap: var(--sp-lg);
+    gap: var(--sp-sm);
 }
 
 .connection-badge {
@@ -96,11 +97,36 @@
     letter-spacing: 1px;
 }
 
+/* ─── Theme Toggle Button ──────────────────────────────────────── */
+.btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    padding: 0;
+    line-height: 1;
+}
+
+.btn-theme-toggle:hover {
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+}
+
 /* ─── Main Content Area ────────────────────────────────────────── */
 #main-content {
     display: flex;
     flex: 1;
     overflow: hidden;
+    min-height: 0;
 }
 
 /* ─── Left Panel ───────────────────────────────────────────────── */
@@ -111,7 +137,7 @@
     flex-direction: column;
     gap: var(--sp-sm);
     padding: var(--sp-sm);
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
     border-right: 1px solid rgba(0, 212, 255, 0.08);
     background: rgba(6, 10, 16, 0.5);
@@ -191,7 +217,8 @@
 /* ─── Bottom Plot Strip ────────────────────────────────────────── */
 #plot-strip {
     height: var(--bottom-panel-height);
-    min-height: 380px;
+    min-height: 220px;
+    max-height: 320px;
     border-top: 1px solid rgba(0, 212, 255, 0.1);
     background: rgba(6, 10, 16, 0.7);
     display: flex;
@@ -199,7 +226,7 @@
     flex-shrink: 0;
 }
 
-/* Bottom tabs */
+/* Bottom tabs — scrollable to show all 6 */
 .bottom-tabs {
     display: flex;
     gap: 0;
@@ -207,6 +234,12 @@
     padding: 0 var(--sp-sm);
     overflow-x: auto;
     flex-shrink: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.bottom-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .bottom-tab {
@@ -223,6 +256,7 @@
     text-transform: uppercase;
     white-space: nowrap;
     border-bottom: 2px solid transparent;
+    flex-shrink: 0;
 }
 .bottom-tab:hover {
     color: var(--text-secondary);
@@ -237,6 +271,7 @@
     overflow: hidden;
     display: none;
     padding: var(--sp-sm);
+    min-height: 0;
 }
 .bottom-tab-content.active {
     display: flex;
@@ -246,7 +281,7 @@
 /* Plot containers */
 .plot-container {
     flex: 1;
-    min-width: 250px;
+    min-width: 200px;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 212, 255, 0.08);
     border-radius: var(--radius-sm);
@@ -261,14 +296,13 @@
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 2px var(--sp-xs);
     position: absolute;
     top: 4px;
     left: var(--sp-sm);
     z-index: 2;
     background: rgba(6, 10, 16, 0.8);
-    padding: 4px 8px;
-    border-radius: var(--radius-xs);
+    padding: 2px 8px;
+    border-radius: 3px;
     pointer-events: none;
 }
 
@@ -285,6 +319,22 @@
     border-left: 1px solid rgba(0, 212, 255, 0.08);
     background: rgba(6, 10, 16, 0.5);
     flex-shrink: 0;
+}
+
+/* ─── Toast Container ──────────────────────────────────────────── */
+#toast-container {
+    position: fixed;
+    top: calc(var(--header-height) + var(--sp-md));
+    right: var(--sp-lg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+    pointer-events: none;
+}
+
+#toast-container .toast {
+    pointer-events: auto;
 }
 
 /* ─── Responsive ───────────────────────────────────────────────── */

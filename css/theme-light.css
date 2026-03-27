@@ -1,159 +1,547 @@
-/* ClinoSim Pro — Light Theme (Microsoft / Fluent-inspired)
-   IMPORTANT: This file only overrides visuals. It must not affect simulation logic or 3D processing.
-*/
+/* ═══════════════════════════════════════════════════════════════════════
+ * ClinoSim Pro — Light Theme
+ * Microsoft Fluent Design System / WinUI 3 Inspired
+ * Modeled after OneNote, Word, and Windows 11 aesthetics
+ *
+ * Activates when <html data-theme="light">
+ * ═══════════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+/* ─── Design Tokens ────────────────────────────────────────────── */
+[data-theme="light"] {
+    /* Mica / Surface layers */
+    --deep-space: #f5f5f5;
+    --midnight-navy: #fafafa;
 
-:root[data-theme="light"] {
-  --mica-bg:#f3f3f3;
-  --surface:#ffffff;
-  --surface-alt:#f9f9f9;
-  --surface-card:rgba(255,255,255,0.7);
-  --acrylic:rgba(243,243,243,0.85);
-  --nav-bg:rgba(243,243,243,0.9);
-  --border:rgba(0,0,0,0.08);
-  --border-strong:rgba(0,0,0,0.14);
-  --text-primary:#1a1a1a;
-  --text-secondary:#6b6b6b;
-  --text-dim:#6b6b6b;
-  --text-disabled:#acacac;
+    /* Panel surfaces — Fluent acrylic style */
+    --panel-bg: rgba(255, 255, 255, 0.78);
+    --panel-border: rgba(0, 0, 0, 0.06);
+    --panel-glow: rgba(0, 0, 0, 0.02);
 
-  --electric-cyan:#0067c0;
-  --plasma-blue:#0067c0;
-  --deep-blue:#005ba5;
-  --alert-amber:#c19c00;
-  --danger-red:#c42b1c;
-  --success-green:#107c10;
+    /* Fluent accent colors */
+    --electric-cyan: #0078D4;
+    --plasma-blue: #005A9E;
+    --deep-blue: #004578;
+    --alert-amber: #CA5010;
+    --danger-red: #D13438;
+    --success-green: #107C10;
 
-  --panel-bg: var(--surface-card);
-  --panel-border: var(--border);
-  --panel-glow: rgba(0,0,0,0.02);
+    /* Text hierarchy — Microsoft style */
+    --text-primary: #1B1B1B;
+    --text-secondary: #616161;
+    --text-dim: #8A8A8A;
+    --text-accent: var(--electric-cyan);
 
-  --font-heading:'Segoe UI',system-ui,sans-serif;
-  --font-body:'Segoe UI',system-ui,sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    /* Typography — Segoe UI stack */
+    --font-heading: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono: 'Cascadia Code', 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+
+    /* Borders */
+    --border-glow: 1px solid rgba(0, 0, 0, 0.06);
+
+    /* Shadows — Fluent elevation */
+    --shadow-glow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-glow-strong: 0 2px 8px rgba(0, 0, 0, 0.12);
+    --shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-:root[data-theme="light"] body {
-  background: var(--mica-bg);
-  background-image:
-    radial-gradient(ellipse at 20% 20%,rgba(0,120,212,0.04) 0%,transparent 60%),
-    radial-gradient(ellipse at 80% 80%,rgba(0,103,192,0.03) 0%,transparent 60%);
-  color: var(--text-primary);
+/* ─── Base / Body ─────────────────────────────────────────────── */
+[data-theme="light"] body {
+    background: #F3F3F3;
+    background-image:
+        radial-gradient(ellipse at 30% 0%, rgba(0, 120, 212, 0.03) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 100%, rgba(0, 120, 212, 0.02) 0%, transparent 60%);
+    color: var(--text-primary);
 }
 
-/* Header -> Titlebar look */
-:root[data-theme="light"] #header {
-  height: 48px;
-  background: var(--acrylic);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
+/* Remove dark grid overlay */
+[data-theme="light"] body::before {
+    background-image: none;
 }
 
-:root[data-theme="light"] .logo {
-  font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+[data-theme="light"] ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: transparent;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
 }
 
-:root[data-theme="light"] .connection-badge {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
+/* ─── Header — Fluent Titlebar ──────────────────────────────── */
+[data-theme="light"] #header {
+    background: rgba(243, 243, 243, 0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
 }
 
-:root[data-theme="light"] #left-panel {
-  background: var(--nav-bg);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border);
+[data-theme="light"] .logo {
+    color: var(--text-primary);
+    text-shadow: none;
+    font-weight: 700;
+    letter-spacing: 1.5px;
 }
 
-:root[data-theme="light"] #right-panel {
-  background: var(--surface-alt);
-  border-left: 1px solid var(--border);
+[data-theme="light"] .mode-tab {
+    color: var(--text-secondary);
+    background: transparent;
+}
+[data-theme="light"] .mode-tab:hover {
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.04);
+}
+[data-theme="light"] .mode-tab.active {
+    color: var(--electric-cyan);
+    background: rgba(0, 120, 212, 0.08);
+    box-shadow: none;
+}
+[data-theme="light"] .mode-tab.locked {
+    color: var(--text-dim);
 }
 
-:root[data-theme="light"] .panel {
-  background: var(--surface-card);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.06);
-  backdrop-filter: blur(10px);
+[data-theme="light"] .mode-tabs {
+    background: rgba(0, 0, 0, 0.04);
 }
 
-:root[data-theme="light"] .panel-header {
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.7rem;
+[data-theme="light"] .connection-badge {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary);
 }
 
-/* Buttons */
-:root[data-theme="light"] .btn {
-  border-color: var(--border);
+[data-theme="light"] .session-timer {
+    color: var(--text-secondary);
 }
 
-:root[data-theme="light"] .btn-primary,
-:root[data-theme="light"] .btn-success {
-  background: var(--electric-cyan);
-  border-color: var(--electric-cyan);
-  color: #fff;
+[data-theme="light"] .menu-link {
+    color: var(--text-secondary);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .menu-link:hover {
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+    background: rgba(0, 120, 212, 0.06);
 }
 
-:root[data-theme="light"] .btn-ghost {
-  background: transparent;
-  border-color: transparent;
-  color: var(--text-primary);
+/* Theme toggle button */
+[data-theme="light"] .btn-theme-toggle {
+    color: var(--text-secondary);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .btn-theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text-primary);
+    border-color: rgba(0, 0, 0, 0.12);
 }
 
-:root[data-theme="light"] .btn-ghost:hover {
-  background: rgba(0,0,0,0.05);
-  border-color: var(--border);
+/* ─── Side Panels — Fluent Navigation Pane ─────────────────── */
+[data-theme="light"] #left-panel {
+    background: rgba(249, 249, 249, 0.85);
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-/* Inputs */
-:root[data-theme="light"] input,
-:root[data-theme="light"] select {
-  background: var(--surface);
-  color: var(--text-primary);
-  border-color: var(--border-strong);
+[data-theme="light"] #right-panel {
+    background: rgba(249, 249, 249, 0.85);
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-/* Bottom plot strip -> Fluent surface */
-:root[data-theme="light"] #plot-strip {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
+/* ─── Panel Cards — Fluent Card Style ──────────────────────── */
+[data-theme="light"] .panel {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
-:root[data-theme="light"] .bottom-tabs {
-  background: var(--surface-alt);
-  border-bottom: 1px solid var(--border);
+[data-theme="light"] .panel-header {
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.7rem;
+    letter-spacing: 0.8px;
 }
 
-:root[data-theme="light"] .bottom-tab {
-  color: var(--text-secondary);
-  border-bottom-color: transparent;
+[data-theme="light"] .panel-body {
+    color: var(--text-primary);
 }
 
-:root[data-theme="light"] .bottom-tab.active {
-  color: var(--electric-cyan);
-  border-bottom-color: var(--electric-cyan);
+/* ─── Buttons — Fluent Style ───────────────────────────────── */
+[data-theme="light"] .btn {
+    border-color: rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
 }
 
-:root[data-theme="light"] .plot-container {
-  background: var(--surface);
-  border-color: var(--border);
+[data-theme="light"] .btn-primary {
+    background: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+    color: #fff;
+    box-shadow: none;
+}
+[data-theme="light"] .btn-primary:hover {
+    background: #106EBE;
+    box-shadow: 0 1px 4px rgba(0, 120, 212, 0.25);
+    transform: none;
 }
 
-:root[data-theme="light"] .plot-title {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
+[data-theme="light"] .btn-success {
+    background: var(--success-green);
+    border-color: var(--success-green);
+    color: #fff;
 }
 
-/* Chart.js defaults (light) via CSS vars used by app.js configs */
-:root[data-theme="light"] .text-dim,
-:root[data-theme="light"] .readout-label {
-  color: var(--text-secondary);
+[data-theme="light"] .btn-ghost {
+    background: transparent;
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+}
+[data-theme="light"] .btn-ghost:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .btn-danger {
+    background: var(--danger-red);
+    border-color: var(--danger-red);
+    color: #fff;
+    box-shadow: none;
+}
+
+/* E-STOP */
+[data-theme="light"] .btn-estop {
+    background: var(--danger-red);
+    border-color: #E74856;
+    box-shadow: 0 2px 6px rgba(209, 52, 56, 0.2);
+    animation: none;
+}
+[data-theme="light"] .btn-estop:hover {
+    box-shadow: 0 3px 12px rgba(209, 52, 56, 0.35);
+}
+
+/* ─── Inputs & Sliders — Fluent Style ──────────────────────── */
+[data-theme="light"] input[type="number"],
+[data-theme="light"] input[type="text"],
+[data-theme="light"] .input-field,
+[data-theme="light"] .rpm-input,
+[data-theme="light"] .geometry-value,
+[data-theme="light"] .pid-input {
+    background: #fff;
+    color: var(--text-primary);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] input[type="number"]:focus,
+[data-theme="light"] input[type="text"]:focus,
+[data-theme="light"] .input-field:focus,
+[data-theme="light"] .rpm-input:focus,
+[data-theme="light"] .geometry-value:focus {
+    border-color: var(--electric-cyan);
+    box-shadow: 0 0 0 1px rgba(0, 120, 212, 0.15);
+}
+
+[data-theme="light"] select {
+    background: #fff;
+    color: var(--text-primary);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+[data-theme="light"] select:focus {
+    border-color: var(--electric-cyan);
+}
+
+/* Range slider */
+[data-theme="light"] input[type="range"] {
+    background: rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] input[type="range"]::-webkit-slider-thumb {
+    background: var(--electric-cyan);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Checkbox */
+[data-theme="light"] input[type="checkbox"] {
+    accent-color: var(--electric-cyan);
+}
+
+/* ─── Direction Buttons ────────────────────────────────────── */
+[data-theme="light"] .direction-btn {
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--text-dim);
+}
+[data-theme="light"] .direction-btn.active {
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+    background: rgba(0, 120, 212, 0.06);
+}
+
+/* ─── Data Readouts ────────────────────────────────────────── */
+[data-theme="light"] .readout-value {
+    color: var(--electric-cyan);
+    text-shadow: none;
+}
+
+[data-theme="light"] .readout-unit {
+    color: var(--text-dim);
+}
+
+[data-theme="light"] .readout-label {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .readout-row {
+    border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+
+/* ─── RPM Display ──────────────────────────────────────────── */
+[data-theme="light"] .rpm-value {
+    color: var(--electric-cyan);
+    text-shadow: none;
+}
+
+[data-theme="light"] .rpm-unit {
+    color: var(--text-dim);
+}
+
+[data-theme="light"] .axis-label {
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .axis-color-dot.axis1 {
+    background: var(--electric-cyan);
+    box-shadow: 0 0 3px rgba(0, 120, 212, 0.3);
+}
+[data-theme="light"] .axis-color-dot.axis2 {
+    background: var(--success-green);
+    box-shadow: 0 0 3px rgba(16, 124, 16, 0.3);
+}
+[data-theme="light"] .axis-color-dot.axis3 {
+    background: var(--alert-amber);
+    box-shadow: 0 0 3px rgba(202, 80, 16, 0.3);
+}
+
+/* ─── Quality Badge ────────────────────────────────────────── */
+[data-theme="light"] .quality-badge.excellent {
+    background: rgba(16, 124, 16, 0.08);
+    color: var(--success-green);
+    border-color: rgba(16, 124, 16, 0.2);
+}
+[data-theme="light"] .quality-badge.good {
+    background: rgba(0, 120, 212, 0.08);
+    color: var(--electric-cyan);
+    border-color: rgba(0, 120, 212, 0.2);
+}
+[data-theme="light"] .quality-badge.fair {
+    background: rgba(202, 80, 16, 0.08);
+    color: var(--alert-amber);
+    border-color: rgba(202, 80, 16, 0.2);
+}
+[data-theme="light"] .quality-badge.poor {
+    background: rgba(209, 52, 56, 0.08);
+    color: var(--danger-red);
+    border-color: rgba(209, 52, 56, 0.2);
+}
+
+/* ─── Status Dots ──────────────────────────────────────────── */
+[data-theme="light"] .status-dot.ok {
+    background: var(--success-green);
+    box-shadow: 0 0 4px rgba(16, 124, 16, 0.3);
+}
+[data-theme="light"] .status-dot.warn {
+    background: var(--alert-amber);
+    box-shadow: 0 0 4px rgba(202, 80, 16, 0.3);
+}
+[data-theme="light"] .status-dot.error {
+    background: var(--danger-red);
+    box-shadow: 0 0 4px rgba(209, 52, 56, 0.3);
+}
+
+/* ─── Collision Indicator ──────────────────────────────────── */
+[data-theme="light"] .collision-indicator.ok {
+    background: rgba(16, 124, 16, 0.05);
+    border-color: rgba(16, 124, 16, 0.15);
+    color: var(--success-green);
+}
+[data-theme="light"] .collision-indicator.collision {
+    background: rgba(209, 52, 56, 0.05);
+    border-color: rgba(209, 52, 56, 0.15);
+    color: var(--danger-red);
+}
+
+/* ─── Radio Buttons ────────────────────────────────────────── */
+[data-theme="light"] .radio-option {
+    color: var(--text-secondary);
+}
+[data-theme="light"] .radio-option:hover {
+    color: var(--text-primary);
+}
+[data-theme="light"] .radio-dot {
+    border-color: rgba(0, 0, 0, 0.2);
+}
+[data-theme="light"] .radio-option input:checked ~ .radio-dot {
+    border-color: var(--electric-cyan);
+}
+[data-theme="light"] .radio-option input:checked ~ .radio-dot::after {
+    background: var(--electric-cyan);
+    box-shadow: none;
+}
+[data-theme="light"] .radio-desc {
+    color: var(--text-dim);
+}
+[data-theme="light"] .radio-option input:checked ~ .radio-label-block .radio-desc {
+    color: var(--text-secondary);
+}
+
+/* ─── Toggle Switch ────────────────────────────────────────── */
+[data-theme="light"] .toggle-slider {
+    background: rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] .toggle-slider::before {
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+[data-theme="light"] .toggle input:checked + .toggle-slider {
+    background: var(--electric-cyan);
+}
+[data-theme="light"] .toggle input:checked + .toggle-slider::before {
+    background: #fff;
+    box-shadow: none;
+}
+
+/* ─── Divider ──────────────────────────────────────────────── */
+[data-theme="light"] .divider {
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.08), transparent);
+}
+
+/* ─── 3D Viewport ──────────────────────────────────────────── */
+[data-theme="light"] #viewport-container {
+    background: #F0F0F0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .viewport-btn {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary);
+    backdrop-filter: blur(8px);
+}
+[data-theme="light"] .viewport-btn:hover {
+    background: rgba(0, 120, 212, 0.06);
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+}
+[data-theme="light"] .viewport-btn.active {
+    background: rgba(0, 120, 212, 0.08);
+    color: var(--electric-cyan);
+}
+
+[data-theme="light"] .viewport-info {
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--text-secondary);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(8px);
+}
+
+/* ─── Bottom Plot Strip ────────────────────────────────────── */
+[data-theme="light"] #plot-strip {
+    background: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .bottom-tabs {
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .bottom-tab {
+    color: var(--text-dim);
+}
+[data-theme="light"] .bottom-tab:hover {
+    color: var(--text-secondary);
+}
+[data-theme="light"] .bottom-tab.active {
+    color: var(--electric-cyan);
+    border-bottom-color: var(--electric-cyan);
+}
+
+[data-theme="light"] .plot-container {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .plot-title {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Toasts ───────────────────────────────────────────────── */
+[data-theme="light"] .toast.info {
+    background: rgba(0, 120, 212, 0.95);
+    border-color: var(--electric-cyan);
+    color: #fff;
+}
+[data-theme="light"] .toast.success {
+    background: rgba(16, 124, 16, 0.95);
+    border-color: var(--success-green);
+    color: #fff;
+}
+[data-theme="light"] .toast.warning {
+    background: rgba(202, 80, 16, 0.95);
+    border-color: var(--alert-amber);
+    color: #fff;
+}
+[data-theme="light"] .toast.error {
+    background: rgba(209, 52, 56, 0.95);
+    border-color: var(--danger-red);
+    color: #fff;
+}
+
+/* ─── About Modal ──────────────────────────────────────────── */
+[data-theme="light"] #about-modal > div {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="light"] #about-modal > div > div {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* ─── Typography overrides ─────────────────────────────────── */
+[data-theme="light"] .text-dim {
+    color: var(--text-dim);
+}
+[data-theme="light"] .text-secondary {
+    color: var(--text-secondary);
+}
+[data-theme="light"] .text-accent {
+    color: var(--electric-cyan);
+}
+
+/* ─── Geometry labels ──────────────────────────────────────── */
+[data-theme="light"] .geometry-label {
+    color: var(--text-secondary);
+}
+[data-theme="light"] .geometry-unit {
+    color: var(--text-dim);
+}
+
+/* ─── Input label ──────────────────────────────────────────── */
+[data-theme="light"] .input-label {
+    color: var(--text-secondary);
+}
+
+/* ─── Stokes section ───────────────────────────────────────── */
+[data-theme="light"] #stokes-results {
+    color: var(--text-primary);
 }
