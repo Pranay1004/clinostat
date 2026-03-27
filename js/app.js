@@ -1051,6 +1051,46 @@ function bindEvents() {
     });
     $('btn-export-csv').addEventListener('click', exportCSV);
 
+    // ─── Point Probe ───
+    ['probe-x', 'probe-y', 'probe-z'].forEach(id => {
+        $(id).addEventListener('change', () => {
+            STATE.probeX = parseFloat($('probe-x').value) || 0;
+            STATE.probeY = parseFloat($('probe-y').value) || 0;
+            STATE.probeZ = parseFloat($('probe-z').value) || 0;
+        });
+    });
+
+    $('btn-probe-calc').addEventListener('click', () => {
+        STATE.probeX = parseFloat($('probe-x').value) || 0;
+        STATE.probeY = parseFloat($('probe-y').value) || 0;
+        STATE.probeZ = parseFloat($('probe-z').value) || 0;
+        STATE.probeActive = true;
+        calcPointProbe();
+        $('probe-results').style.display = 'block';
+    });
+
+    $('probe-live').addEventListener('change', e => {
+        STATE.probeActive = e.target.checked;
+        if (!STATE.probeActive) {
+            $('probe-results').style.display = 'none';
+        }
+    });
+
+    // ─── About Button ───
+    $('btn-about').addEventListener('click', () => {
+        $('about-modal').style.display = 'flex';
+    });
+
+    $('about-close').addEventListener('click', () => {
+        $('about-modal').style.display = 'none';
+    });
+
+    $('about-modal').addEventListener('click', e => {
+        if (e.target.id === 'about-modal') {
+            $('about-modal').style.display = 'none';
+        }
+    });
+
     // ─── Stokes ───
     $('stokes-sample').addEventListener('change', updateStokesAnalysis);
 }

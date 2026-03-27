@@ -4,7 +4,7 @@
 
 | Component | Status | URL |
 |-----------|--------|-----|
-| **Frontend UI** | 🔄 Deploy to Vercel | https://clinostat.vercel.app |
+| **Frontend UI** | ✅ Live on Vercel | https://clinostat.vercel.app |
 | **Backend API** | 🔄 Deploy to Railway | https://clinosim-backend.railway.app |
 | **GitHub Repo** | ✅ Done | https://github.com/Pranay1004/clinostat |
 
@@ -33,22 +33,28 @@
 6. Deploy
 ```
 
-**Railway Environment Variables:**
+**Railway Environment Variables (Copy-Paste Ready):**
 ```
 NODE_ENV=production
 PORT=3000
 WS_PORT=3001
 FRONTEND_URL=https://clinostat.vercel.app
 CLINOSTAT_WIFI_IP=192.168.1.100
+CLINOSTAT_SERIAL_PORT=/dev/ttyUSB0
+CLINOSTAT_BAUD_RATE=115200
 ```
 
+*Note: Update CLINOSTAT_WIFI_IP, CLINOSTAT_SERIAL_PORT, and CLINOSTAT_BAUD_RATE once you have physical hardware.*
+
 ### **🔄 Finally: Connect Frontend to Backend**
-Edit [js/app.js](js/app.js):
+After Railway backend is deployed, edit [js/app.js](js/app.js):
 ```javascript
-// Line ~5, change:
-const API_URL = 'https://clinosim-backend.railway.app';
-const WS_URL = 'wss://clinosim-backend.railway.app';
+// Find lines ~5, and replace:
+const API_URL = 'https://clinosim-backend-<your-railway-id>.railway.app';
+const WS_URL = 'wss://clinosim-backend-<your-railway-id>.railway.app';
 ```
+
+*(Copy the exact URL from your Railway dashboard)*
 
 Push to GitHub → Vercel auto-redeploys ✅
 

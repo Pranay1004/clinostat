@@ -75,7 +75,7 @@
 }
 
 html {
-    font-size: 16px;
+    font-size: 14px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -155,7 +155,7 @@ h1, h2, h3, h4 {
     padding: var(--sp-sm) var(--sp-md);
     border-bottom: 1px solid rgba(0, 212, 255, 0.1);
     font-family: var(--font-heading);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-accent);
     text-transform: uppercase;
@@ -171,7 +171,7 @@ h1, h2, h3, h4 {
 
 .panel-body {
     padding: var(--sp-md);
-    overflow-y: auto;
+    overflow-y: hidden;
     max-height: calc(100% - 36px);
 }
 
@@ -179,7 +179,7 @@ h1, h2, h3, h4 {
 .btn {
     font-family: var(--font-heading);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     letter-spacing: 0.5px;
     padding: var(--sp-sm) var(--sp-lg);
     border: 1px solid transparent;
@@ -273,7 +273,7 @@ h1, h2, h3, h4 {
 
 .input-label {
     font-family: var(--font-heading);
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -281,7 +281,7 @@ h1, h2, h3, h4 {
 
 .input-field {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-primary);
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -289,7 +289,7 @@ h1, h2, h3, h4 {
     padding: var(--sp-sm) var(--sp-md);
     outline: none;
     transition: border-color var(--transition-fast);
-}
+
 .input-field:focus {
     border-color: var(--electric-cyan);
     box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);

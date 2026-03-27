@@ -35,18 +35,13 @@
 
 .logo {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: 2px;
     color: var(--electric-cyan);
     text-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
     text-transform: uppercase;
     white-space: nowrap;
-}
-.logo span {
-    color: var(--text-secondary);
-    font-weight: 400;
-    font-size: 0.85rem;
 }
 
 .header-center {
@@ -75,7 +70,7 @@
 
 .session-timer {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
     letter-spacing: 1px;
 }
@@ -95,7 +90,7 @@
     flex-direction: column;
     gap: var(--sp-sm);
     padding: var(--sp-sm);
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     border-right: 1px solid rgba(0, 212, 255, 0.08);
     background: rgba(6, 10, 16, 0.5);
@@ -175,7 +170,7 @@
 /* ─── Bottom Plot Strip ────────────────────────────────────────── */
 #plot-strip {
     height: var(--bottom-panel-height);
-    min-height: 180px;
+    min-height: 220px;
     border-top: 1px solid rgba(0, 212, 255, 0.1);
     background: rgba(6, 10, 16, 0.7);
     display: flex;

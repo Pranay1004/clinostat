@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClinoSim Pro — Microgravity Digital Twin</title>
-    <meta name="description" content="Professional microgravity simulation platform for 1D, 2D, and 3D clinostats. Ground-truth simulation for PS4 spaceflight experiments.">
+    <title>CLINOSTAT — Microgravity Digital Twin</title>
+    <meta name="description" content="CLINOSTAT: Online microgravity simulation platform for 1D, 2D, and 3D clinostats. Digital twin for space flight experiments.">
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
@@ -26,7 +26,7 @@
     <!-- ═══════════ HEADER ═══════════ -->
     <header id="header">
         <div class="header-left">
-            <div class="logo">ClinoSim<span> PRO</span></div>
+            <div class="logo">CLINOSTAT</div>
             <div class="mode-tabs" id="mode-tabs">
                 <button class="mode-tab" data-mode="1D" id="tab-1d">1D</button>
                 <button class="mode-tab active" data-mode="2D" id="tab-2d">2D RPM</button>
@@ -41,7 +41,8 @@
             <div class="session-timer" id="session-timer">00:00:00</div>
         </div>
         <div class="header-right">
-            <span class="text-dim" style="font-size:0.7rem; font-family: var(--font-mono);" id="sim-time-label">t = 0.000 s</span>
+            <span class="text-dim" style="font-size:0.6rem; font-family: var(--font-mono);" id="sim-time-label">t = 0.000 s</span>
+            <button class="btn btn-ghost btn-sm" id="btn-about" title="About">ⓘ</button>
             <button class="btn btn-ghost btn-sm" id="btn-settings" title="Settings">⚙</button>
         </div>
     </header>
@@ -477,6 +478,61 @@
 
 <!-- Toast notification container -->
 <div id="toast-container"></div>
+
+<!-- ═══════════ ABOUT MODAL ═══════════ -->
+<div id="about-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px">
+    <div style="background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:12px; max-width:600px; width:100%; padding:30px; backdrop-filter:blur(12px); max-height:85vh; overflow-y:auto; box-shadow:0 0 40px rgba(0,212,255,0.2)">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+            <h2 style="font-family:var(--font-heading); font-size:1.5rem; color:var(--electric-cyan); margin:0; letter-spacing:2px">CLINOSTAT</h2>
+            <button id="about-close" style="background:none; border:none; color:var(--text-secondary); font-size:1.5rem; cursor:pointer; padding:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center;">✕</button>
+        </div>
+        
+        <div style="color:var(--text-secondary); font-family:var(--font-body); font-size:0.9rem; line-height:1.8">
+            <h3 style="color:var(--text-accent); font-family:var(--font-heading); font-size:1rem; margin:16px 0 8px 0; letter-spacing:1px">DIGITAL TWIN PLATFORM</h3>
+            <p style="margin:0 0 12px 0">
+                CLINOSTAT is a professional <strong>digital twin simulation platform</strong> for microgravity research. It provides accurate ground-truth simulations of clinostat environments for spaceflight experiments, enabling scientists to predict and validate biological and materials research outcomes before launch.
+            </p>
+            
+            <h3 style="color:var(--text-accent); font-family:var(--font-heading); font-size:1rem; margin:16px 0 8px 0; letter-spacing:1px">FOR THE IIST COMMUNITY</h3>
+            <p style="margin:0 0 12px 0">
+                Developed for students and researchers at <strong>Indian Institute of Space Science and Technology (IIST), Trivandrum</strong>, this platform serves as a bridge for connection and control between Earth-based experiments and space operations. 
+            </p>
+            <p style="margin:0 0 12px 0">
+                The clinostat has long been a need in microgravity research. This online portal fulfills that need by providing:
+            </p>
+            <ul style="margin:8px 0 12px 20px; padding:0">
+                <li>Real-time 1D, 2D, and 3D rotation simulations</li>
+                <li>Gravity residual calculations &amp; optimization</li>
+                <li>Payload geometry editor &amp; collision detection</li>
+                <li>Stokes settling analysis for biological samples</li>
+                <li>Hardware control over WiFi, USB, and Bluetooth</li>
+                <li>Live data logging &amp; CSV export</li>
+            </ul>
+            
+            <h3 style="color:var(--text-accent); font-family:var(--font-heading); font-size:1rem; margin:16px 0 8px 0; letter-spacing:1px">FOR SPACE RESEARCH</h3>
+            <p style="margin:0 0 12px 0">
+                CLINOSTAT enables verification of experimental protocols and hardware compatibility for space missions, reducing mission risk and accelerating the pace of scientific discovery in microgravity.
+            </p>
+            
+            <h3 style="color:var(--text-accent); font-family:var(--font-heading); font-size:1rem; margin:16px 0 8px 0; letter-spacing:1px">TECHNICAL STACK</h3>
+            <p style="margin:0; font-family:var(--font-mono); font-size:0.8rem; color:var(--text-dim)">
+                Frontend: HTML5 • Three.js • Chart.js<br>
+                Backend: Node.js • Express • WebSocket<br>
+                Physics: Custom quaternion-based 6-DOF simulator<br>
+                Deployment: Vercel (Frontend) • Railway (Backend)
+            </p>
+            
+            <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(0,212,255,0.1); color:var(--text-dim); font-size:0.8rem">
+                <p style="margin:0; margin-bottom:8px">
+                    <strong>Repository:</strong> <a href="https://github.com/Pranay1004/clinostat" target="_blank" style="color:var(--electric-cyan); text-decoration:none">github.com/Pranay1004/clinostat</a>
+                </p>
+                <p style="margin:0">
+                    <strong>Made with ❤️ for IIST Space Research Community</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- ═══════════ MAIN APPLICATION SCRIPT ═══════════ -->
 <script src="js/app.js"></script>
