@@ -40,6 +40,21 @@ app.use(express.static(path.join(__dirname, '../')));
 // Routes
 // ════════════════════════════════════════════
 
+// API landing page so the public Railway URL is not a blank 404-style response
+app.get(['/api', '/api/'], (req, res) => {
+  res.json({
+    service: 'ClinoSim Pro Backend',
+    status: 'ok',
+    endpoints: {
+      health: '/api/health',
+      simulation: '/api/simulation/run',
+      devicesDiscover: '/api/devices/discover',
+      deviceCommand: '/api/devices/:deviceId/command',
+      history: '/api/data/history'
+    }
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({
