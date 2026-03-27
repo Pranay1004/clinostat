@@ -573,6 +573,14 @@ function initCharts() {
             }
         }
     });
+
+    // Validate all charts are initialized
+    const charts = { chartGResTime, chartFFT, chartRPM, chartGVec, chartAngles };
+    for (const [name, chart] of Object.entries(charts)) {
+        if (!chart) {
+            console.warn(`⚠ Chart failed to initialize: ${name}`);
+        }
+    }
 }
 
 function computeDFT(signal, sampleRate) {
