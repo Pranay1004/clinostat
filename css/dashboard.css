@@ -252,6 +252,7 @@
     border-radius: var(--radius-sm);
     padding: var(--sp-xs);
     position: relative;
+    overflow: hidden;
 }
 
 .plot-title {

@@ -374,17 +374,25 @@ function initCharts() {
                 label: 'g-Residual',
                 data: [],
                 borderColor: COLORS.CYAN,
-                borderWidth: 1.5,
+                backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                borderWidth: 2,
                 pointRadius: 0,
                 tension: 0.2,
-                fill: false
+                fill: true
             }]
         },
         options: {
             ...commonOpts,
+            normalized: true,
             scales: {
                 x: { ...commonOpts.scales.x, title: { display: true, text: 'Time (s)', color: '#556677', font: { size: 9 } } },
-                y: { ...commonOpts.scales.y, title: { display: true, text: '% of g₀', color: '#556677', font: { size: 9 } }, min: 0, max: 100 }
+                y: { 
+                    ...commonOpts.scales.y,
+                    title: { display: true, text: '% of g₀', color: '#556677', font: { size: 9 } },
+                    beginAtZero: true,
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
             }
         }
     });
@@ -613,16 +621,25 @@ function updateFFT() {
 
 function pushChartData(chart, label, ...values) {
     if (!chart) return;
-    chart.data.labels.push(label);
-    values.forEach((v, i) => {
-        if (chart.data.datasets[i]) chart.data.datasets[i].data.push(v);
-    });
-    // Trim
-    while (chart.data.labels.length > MAX_PLOT_POINTS) {
-        chart.data.labels.shift();
-        chart.data.datasets.forEach(ds => ds.data.shift());
+    if (!chart.data) return;
+    
+    try {
+        chart.data.labels.push(label);
+        values.forEach((v, i) => {
+            if (chart.data.datasets[i]) {
+                const val = typeof v === 'number' ? v : 0;
+                chart.data.datasets[i].data.push(val);
+            }
+        });
+        // Trim
+        while (chart.data.labels.length > MAX_PLOT_POINTS) {
+            chart.data.labels.shift();
+            chart.data.datasets.forEach(ds => ds.data.shift());
+        }
+        chart.update('none'); // no animation
+    } catch (err) {
+        console.error('Chart update error:', err, chart);
     }
-    chart.update('none'); // no animation
 }
 
 // ─── Chart Update Functions ───
@@ -1383,6 +1400,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initCharts();
     bindEvents();
     requestAnimationFrame(animate);
+
+    // Debug: Verify chart initialization
+    console.log('%c📊 Chart Initialization Status ', 'background: #00D4FF; color: #000; font-size: 12px; padding: 6px 8px; border-radius: 3px; font-weight: bold;');
+    console.log('✓ g-Residual:', chartGResTime ? 'READY' : '✗ FAILED');
+    console.log('✓ FFT Spectrum:', chartFFT ? 'READY' : '✗ FAILED');
+    console.log('✓ RPM Tracking:', chartRPM ? 'READY' : '✗ FAILED');
+    console.log('✓ Gravity Vector:', chartGVec ? 'READY' : '✗ FAILED');
+    console.log('✓ Orientation:', chartAngles ? 'READY' : '✗ FAILED');
 
     showToast('ClinoSim Pro initialized — Simulation Mode', 'success');
     console.log('%c ClinoSim Pro v1.0 ', 'background: #0066FF; color: white; font-size: 14px; padding: 4px 8px; border-radius: 4px;');
