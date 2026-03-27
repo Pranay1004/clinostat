@@ -14,10 +14,6 @@
     "ws": "^8.13.0",
     "axios": "^1.4.0"
   },
-  "optionalDependencies": {
-    "serialport": "^11.0.0",
-    "noble": "^1.9.2"
-  },
   "devDependencies": {
     "nodemon": "^2.0.22"
   },
