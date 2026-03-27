@@ -1,0 +1,43 @@
+# Backend and runtime
+backend/
+node_modules/
+__pycache__/
+*.pyc
+.python-version
+venv/
+env/
+
+# Config and documentation
+README.md
+QUICK_START.md
+DEPLOYMENT_GUIDE.md
+RAILWAY_SETUP.md
+MATH_CALCULATIONS_README.md
+CITATIONS.md
+CLAUDE.md
+AGENTS.md
+guide.txt
+guide2.txt
+
+# Git and environment
+.git/
+.gitignore
+.env
+.env.local
+.env.*.local
+
+# Build and runtime
+railway.toml
+start.sh
+*.log
+.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude agent files
+.claude/
+.gitnexus/
