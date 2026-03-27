@@ -1,0 +1,13 @@
+[build.environment]
+NODE_VERSION = "18.x"
+
+[[redirects]]
+from = "/api/*"
+to = "https://clinosim-backend.railway.app/api/:splat"
+status = 200
+
+[[headers]]
+for = "/*"
+[headers.values]
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET,POST,PUT,DELETE,OPTIONS"

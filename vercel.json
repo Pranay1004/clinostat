@@ -1,0 +1,16 @@
+{
+  "$schema": "https://assets.vercel.com/raw/upload/v1711553442/vercel.json",
+  "buildCommand": "# No build needed for static site",
+  "outputDirectory": ".",
+  "framework": "static",
+  "env": {
+    "VITE_API_URL": "@vite-api-url"
+  },
+  "public": false,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://<your-backend-url>/api/:path*"
+    }
+  ]
+}
