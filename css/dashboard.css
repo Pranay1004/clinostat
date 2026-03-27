@@ -1,0 +1,293 @@
+/*
+ * ClinoSim Pro — Dashboard Layout
+ * Three-column layout: Left Panel | 3D Viewport + Plot Strip | Right Panel
+ */
+
+/* ─── App Container ────────────────────────────────────────────── */
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── Header ───────────────────────────────────────────────────── */
+#header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--sp-lg);
+    background: rgba(6, 10, 16, 0.95);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.12);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-lg);
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--electric-cyan);
+    text-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.logo span {
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-lg);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-lg);
+}
+
+.connection-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: var(--sp-xs) var(--sp-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.session-timer {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+}
+
+/* ─── Main Content Area ────────────────────────────────────────── */
+#main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ─── Left Panel ───────────────────────────────────────────────── */
+#left-panel {
+    width: var(--left-panel-width);
+    min-width: var(--left-panel-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+    padding: var(--sp-sm);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 1px solid rgba(0, 212, 255, 0.08);
+    background: rgba(6, 10, 16, 0.5);
+    flex-shrink: 0;
+}
+
+/* ─── Center Area (Viewport + Plots) ───────────────────────────── */
+#center-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+#viewport-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: var(--deep-space);
+    min-height: 200px;
+}
+
+#viewport-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Viewport overlay controls */
+.viewport-overlay {
+    position: absolute;
+    top: var(--sp-sm);
+    left: var(--sp-sm);
+    display: flex;
+    gap: var(--sp-xs);
+    z-index: 10;
+}
+
+.viewport-btn {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(4px);
+}
+.viewport-btn:hover {
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+    background: rgba(0, 212, 255, 0.1);
+}
+.viewport-btn.active {
+    color: var(--electric-cyan);
+    background: rgba(0, 212, 255, 0.15);
+}
+
+/* Physics info overlay */
+.viewport-info {
+    position: absolute;
+    bottom: var(--sp-sm);
+    left: var(--sp-sm);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: rgba(0, 0, 0, 0.5);
+    padding: var(--sp-xs) var(--sp-sm);
+    border-radius: var(--radius-sm);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* ─── Bottom Plot Strip ────────────────────────────────────────── */
+#plot-strip {
+    height: var(--bottom-panel-height);
+    min-height: 180px;
+    border-top: 1px solid rgba(0, 212, 255, 0.1);
+    background: rgba(6, 10, 16, 0.7);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+/* Bottom tabs */
+.bottom-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+    padding: 0 var(--sp-sm);
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.bottom-tab {
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    padding: var(--sp-sm) var(--sp-md);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+}
+.bottom-tab:hover {
+    color: var(--text-secondary);
+}
+.bottom-tab.active {
+    color: var(--electric-cyan);
+    border-bottom-color: var(--electric-cyan);
+}
+
+.bottom-tab-content {
+    flex: 1;
+    overflow: hidden;
+    display: none;
+    padding: var(--sp-sm);
+}
+.bottom-tab-content.active {
+    display: flex;
+    gap: var(--sp-sm);
+}
+
+/* Plot containers */
+.plot-container {
+    flex: 1;
+    min-width: 250px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 212, 255, 0.08);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-xs);
+    position: relative;
+}
+
+.plot-title {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px var(--sp-xs);
+    position: absolute;
+    top: 2px;
+    left: var(--sp-sm);
+    z-index: 2;
+}
+
+/* ─── Right Panel ──────────────────────────────────────────────── */
+#right-panel {
+    width: var(--right-panel-width);
+    min-width: var(--right-panel-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+    padding: var(--sp-sm);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-left: 1px solid rgba(0, 212, 255, 0.08);
+    background: rgba(6, 10, 16, 0.5);
+    flex-shrink: 0;
+}
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+    :root {
+        --left-panel-width: 240px;
+        --right-panel-width: 260px;
+    }
+}
+
+@media (max-width: 1000px) {
+    #main-content {
+        flex-direction: column;
+    }
+    #left-panel, #right-panel {
+        width: 100%;
+        min-width: unset;
+        max-height: 200px;
+        flex-direction: row;
+        overflow-x: auto;
+        border: none;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+    }
+    #left-panel .panel, #right-panel .panel {
+        min-width: 250px;
+    }
+}

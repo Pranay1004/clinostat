@@ -1,0 +1,228 @@
+/* ClinoSim Pro — Controls Panel Styles */
+
+/* ─── Motor Control Panel ──────────────────────────────────────── */
+.motor-axis {
+    margin-bottom: var(--sp-md);
+}
+
+.axis-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--sp-sm);
+}
+
+.axis-label {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+}
+
+.axis-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.axis-color-dot.axis1 { background: var(--electric-cyan); box-shadow: 0 0 6px rgba(0, 212, 255, 0.5); }
+.axis-color-dot.axis2 { background: var(--success-green); box-shadow: 0 0 6px rgba(0, 255, 136, 0.5); }
+.axis-color-dot.axis3 { background: var(--alert-amber); box-shadow: 0 0 6px rgba(255, 179, 0, 0.5); }
+
+.rpm-display {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-xs);
+}
+
+.rpm-value {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--electric-cyan);
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}
+
+.rpm-unit {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+}
+
+.rpm-slider-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-xs);
+}
+
+.rpm-slider-row input[type="range"] {
+    flex: 1;
+}
+
+.rpm-input {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    width: 55px;
+    text-align: right;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 2px var(--sp-xs);
+    outline: none;
+}
+.rpm-input:focus { border-color: var(--electric-cyan); }
+
+/* Direction toggle */
+.direction-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-top: var(--sp-xs);
+}
+
+.direction-btn {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 2px var(--sp-sm);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+.direction-btn.active {
+    color: var(--electric-cyan);
+    border-color: var(--electric-cyan);
+    background: rgba(0, 212, 255, 0.1);
+}
+
+/* ─── Control buttons row ──────────────────────────────────────── */
+.control-buttons {
+    display: flex;
+    gap: var(--sp-sm);
+    margin: var(--sp-md) 0;
+}
+
+.control-buttons .btn {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.75rem;
+    padding: var(--sp-sm);
+}
+
+/* ─── Geometry Editor ──────────────────────────────────────────── */
+.geometry-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-sm);
+}
+
+.geometry-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    min-width: 80px;
+}
+
+.geometry-value {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    width: 70px;
+    text-align: right;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 2px var(--sp-xs);
+    outline: none;
+}
+.geometry-value:focus { border-color: var(--electric-cyan); }
+
+.geometry-unit {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    min-width: 25px;
+}
+
+/* ─── Operation Mode ───────────────────────────────────────────── */
+.op-mode-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+}
+
+/* ─── PID Tuning ───────────────────────────────────────────────── */
+.pid-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-xs);
+}
+
+.pid-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    min-width: 22px;
+}
+
+.pid-input {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    width: 60px;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 2px var(--sp-xs);
+    outline: none;
+}
+
+/* ─── Collision Indicator ──────────────────────────────────────── */
+.collision-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    padding: var(--sp-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+}
+.collision-indicator.ok {
+    background: rgba(0, 255, 136, 0.08);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    color: var(--success-green);
+}
+.collision-indicator.collision {
+    background: rgba(255, 59, 59, 0.08);
+    border: 1px solid rgba(255, 59, 59, 0.2);
+    color: var(--danger-red);
+}
+
+/* ─── Inertia Tensor Display ───────────────────────────────────── */
+.tensor-matrix {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-xs);
+}
+.tensor-cell {
+    text-align: center;
+    padding: 2px;
+}
+.tensor-cell.diagonal {
+    color: var(--electric-cyan);
+}

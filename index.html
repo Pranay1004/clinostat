@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClinoSim Pro — Microgravity Digital Twin</title>
+    <meta name="description" content="Professional microgravity simulation platform for 1D, 2D, and 3D clinostats. Ground-truth simulation for PS4 spaceflight experiments.">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/controls.css">
+    <link rel="stylesheet" href="css/3dview.css">
+    <link rel="stylesheet" href="css/plots.css">
+
+    <!-- CDN: Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- CDN: Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">ClinoSim<span> PRO</span></div>
+            <div class="mode-tabs" id="mode-tabs">
+                <button class="mode-tab" data-mode="1D" id="tab-1d">1D</button>
+                <button class="mode-tab active" data-mode="2D" id="tab-2d">2D RPM</button>
+                <button class="mode-tab locked" data-mode="3D" id="tab-3d" title="Coming in Phase 2">3D</button>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="connection-badge" id="connection-badge">
+                <span class="status-dot ok" id="conn-dot"></span>
+                <span id="conn-label">SIMULATION</span>
+            </div>
+            <div class="session-timer" id="session-timer">00:00:00</div>
+        </div>
+        <div class="header-right">
+            <span class="text-dim" style="font-size:0.7rem; font-family: var(--font-mono);" id="sim-time-label">t = 0.000 s</span>
+            <button class="btn btn-ghost btn-sm" id="btn-settings" title="Settings">⚙</button>
+        </div>
+    </header>
+
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <div id="main-content">
+
+        <!-- ─── LEFT PANEL ─── -->
+        <div id="left-panel">
+
+            <!-- Motor Control -->
+            <div class="panel" id="panel-motor">
+                <div class="panel-header">⚡ Motor Control</div>
+                <div class="panel-body">
+                    <!-- Axis 1 -->
+                    <div class="motor-axis" id="motor-axis-1">
+                        <div class="axis-header">
+                            <span class="axis-label"><span class="axis-color-dot axis1"></span> Axis 1 (Inner X)</span>
+                            <div class="rpm-display">
+                                <span class="rpm-value" id="rpm1-display">0.00</span>
+                                <span class="rpm-unit">RPM</span>
+                            </div>
+                        </div>
+                        <div class="rpm-slider-row">
+                            <input type="range" id="rpm1-slider" min="0" max="60" step="0.1" value="5">
+                            <input type="number" class="rpm-input" id="rpm1-input" min="0" max="60" step="0.1" value="5">
+                        </div>
+                        <div class="direction-row">
+                            <span class="input-label" style="font-size:0.65rem">DIR</span>
+                            <button class="direction-btn active" data-axis="1" data-dir="1" id="dir1-cw">CW</button>
+                            <button class="direction-btn" data-axis="1" data-dir="-1" id="dir1-ccw">CCW</button>
+                        </div>
+                    </div>
+
+                    <!-- Axis 2 -->
+                    <div class="motor-axis" id="motor-axis-2">
+                        <div class="axis-header">
+                            <span class="axis-label"><span class="axis-color-dot axis2"></span> Axis 2 (Outer Y)</span>
+                            <div class="rpm-display">
+                                <span class="rpm-value" id="rpm2-display">0.00</span>
+                                <span class="rpm-unit">RPM</span>
+                            </div>
+                        </div>
+                        <div class="rpm-slider-row">
+                            <input type="range" id="rpm2-slider" min="0" max="60" step="0.1" value="8.09">
+                            <input type="number" class="rpm-input" id="rpm2-input" min="0" max="60" step="0.1" value="8.09">
+                        </div>
+                        <div class="direction-row">
+                            <span class="input-label" style="font-size:0.65rem">DIR</span>
+                            <button class="direction-btn" data-axis="2" data-dir="1" id="dir2-cw">CW</button>
+                            <button class="direction-btn active" data-axis="2" data-dir="-1" id="dir2-ccw">CCW</button>
+                        </div>
+                        <div style="margin-top:4px">
+                            <label style="font-size:0.65rem; color: var(--text-dim); display:flex; align-items:center; gap:4px; cursor:pointer">
+                                <input type="checkbox" id="auto-golden" checked> Auto φ ratio
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Axis 3 (3D only, hidden by default) -->
+                    <div class="motor-axis hidden" id="motor-axis-3">
+                        <div class="axis-header">
+                            <span class="axis-label"><span class="axis-color-dot axis3"></span> Axis 3 (Z)</span>
+                            <div class="rpm-display">
+                                <span class="rpm-value" id="rpm3-display">0.00</span>
+                                <span class="rpm-unit">RPM</span>
+                            </div>
+                        </div>
+                        <div class="rpm-slider-row">
+                            <input type="range" id="rpm3-slider" min="0" max="60" step="0.1" value="3">
+                            <input type="number" class="rpm-input" id="rpm3-input" min="0" max="60" step="0.1" value="3">
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Control Buttons -->
+                    <div class="control-buttons">
+                        <button class="btn btn-success btn-sm" id="btn-start">▶ START</button>
+                        <button class="btn btn-ghost btn-sm" id="btn-stop">■ STOP</button>
+                        <button class="btn btn-ghost btn-sm" id="btn-reset">⟳ RESET</button>
+                    </div>
+                    <button class="btn-estop" id="btn-estop">⚠ E-STOP</button>
+                </div>
+            </div>
+
+            <!-- Geometry Editor -->
+            <div class="panel" id="panel-geometry">
+                <div class="panel-header">📐 Geometry Editor</div>
+                <div class="panel-body">
+                    <div class="input-label" style="margin-bottom:6px">Frame 1 (Inner)</div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Radius</span>
+                        <input type="number" class="geometry-value" id="frame1-radius" value="100" min="10" max="500" step="5">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Tube Ø</span>
+                        <input type="number" class="geometry-value" id="frame1-tube" value="8" min="2" max="30" step="1">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Material</span>
+                        <select id="frame1-material" style="width:95px">
+                            <option value="Aluminum 6061" selected>Al 6061</option>
+                            <option value="Steel 304">Steel 304</option>
+                            <option value="Acrylic (PMMA)">Acrylic</option>
+                            <option value="PLA">PLA</option>
+                            <option value="Carbon Fiber">Carbon Fiber</option>
+                        </select>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="input-label" style="margin-bottom:6px">Frame 2 (Outer)</div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Radius</span>
+                        <input type="number" class="geometry-value" id="frame2-radius" value="175" min="50" max="800" step="5">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Tube Ø</span>
+                        <input type="number" class="geometry-value" id="frame2-tube" value="10" min="2" max="30" step="1">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="input-label" style="margin-bottom:6px">Payload Chamber</div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Shape</span>
+                        <select id="payload-shape" style="width:95px">
+                            <option value="sphere">Sphere</option>
+                            <option value="cylinder" selected>Cylinder</option>
+                            <option value="box">Box</option>
+                        </select>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Diameter</span>
+                        <input type="number" class="geometry-value" id="payload-diameter" value="60" min="5" max="200" step="5">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Height</span>
+                        <input type="number" class="geometry-value" id="payload-height" value="50" min="5" max="200" step="5">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="collision-indicator ok" id="collision-indicator">
+                        <span class="status-dot ok"></span> No Collision — Clearance OK
+                    </div>
+                    <div style="margin-top:4px; font-family:var(--font-mono); font-size:0.62rem; color:var(--text-dim); line-height:1.4">
+                        Clearance = R₂ − R₁ − t₁/2 − t₂/2 &nbsp;[mm]<br>
+                        (radial gap between frame outer surfaces)
+                    </div>
+                    <div style="margin-top:6px; font-family: var(--font-mono); font-size:0.7rem; color: var(--text-dim)">
+                        Mass: <span id="total-mass">0.42</span> kg | I: <span id="total-inertia">0.0032</span> kg·m²
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operation Mode -->
+            <div class="panel" id="panel-opmode">
+                <div class="panel-header" title="Selects the RPM control strategy: Constant (fixed speed), Random Walk (variable acceleration to mimic real microgravity), or Optimized RPM">
+                    🔄 Rotation Mode <span style="font-size: 0.85em; margin-left: 6px; opacity: 0.7; cursor: help;">ⓘ</span>
+                </div>
+                <div class="panel-body">
+                    <div class="radio-group">
+                        <label class="radio-option radio-option--desc">
+                            <input type="radio" name="rotation-mode" value="CONSTANT" checked>
+                            <span class="radio-dot"></span>
+                            <span class="radio-label-block">
+                                <span class="radio-text">Constant Speed</span>
+                                <span class="radio-desc">Fixed RPM on both axes. Best for stable, repeatable experiments.</span>
+                            </span>
+                        </label>
+                        <label class="radio-option radio-option--desc">
+                            <input type="radio" name="rotation-mode" value="RANDOM_WALK">
+                            <span class="radio-dot"></span>
+                            <span class="radio-label-block">
+                                <span class="radio-text">Random Walk</span>
+                                <span class="radio-desc">Varies RPM every ~15 s. Mimics stochastic microgravity fluctuations.</span>
+                            </span>
+                        </label>
+                        <label class="radio-option radio-option--desc">
+                            <input type="radio" name="rotation-mode" value="OPTIMIZED">
+                            <span class="radio-dot"></span>
+                            <span class="radio-label-block">
+                                <span class="radio-text">Optimized RPM</span>
+                                <span class="radio-desc">Sets ω₂ = ω₁ × φ (golden ratio) to minimise time-averaged g-residual.</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Point Probe -->
+            <div class="panel" id="panel-probe">
+                <div class="panel-header">📍 Point Probe</div>
+                <div class="panel-body">
+                    <div style="font-size:0.7rem; color:var(--text-dim); margin-bottom:8px; font-family:var(--font-body); line-height:1.5">
+                        Compute g⃗ + centrifugal accel at any point<br>relative to payload centre (mm).
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">X</span>
+                        <input type="number" class="geometry-value" id="probe-x" value="0" min="-500" max="500" step="1">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Y</span>
+                        <input type="number" class="geometry-value" id="probe-y" value="0" min="-500" max="500" step="1">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div class="geometry-row">
+                        <span class="geometry-label">Z</span>
+                        <input type="number" class="geometry-value" id="probe-z" value="0" min="-500" max="500" step="1">
+                        <span class="geometry-unit">mm</span>
+                    </div>
+                    <div style="display:flex; gap:6px; margin-top:4px">
+                        <button class="btn btn-primary btn-sm" id="btn-probe-calc" style="flex:1; justify-content:center">⚡ Calculate</button>
+                        <label style="font-size:0.65rem; color:var(--text-dim); display:flex; align-items:center; gap:4px; cursor:pointer">
+                            <input type="checkbox" id="probe-live"> Live
+                        </label>
+                    </div>
+                    <div id="probe-results" style="margin-top:8px; font-family:var(--font-mono); font-size:0.7rem; color:var(--text-secondary); line-height:1.8; display:none">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── CENTER AREA ─── -->
+        <div id="center-area">
+            <!-- 3D Viewport -->
+            <div id="viewport-container">
+                <div class="viewport-overlay" id="viewport-overlay">
+                    <button class="viewport-btn" data-view="front">Front</button>
+                    <button class="viewport-btn" data-view="side">Side</button>
+                    <button class="viewport-btn" data-view="top">Top</button>
+                    <button class="viewport-btn active" data-view="iso">ISO</button>
+                </div>
+                <div class="viewport-info" id="viewport-info">
+                    g⃗ = [0.00, 0.00, -9.81] m/s² | FPS: 60
+                </div>
+            </div>
+
+            <!-- Bottom Plot Strip -->
+            <div id="plot-strip">
+                <div class="bottom-tabs">
+                    <button class="bottom-tab active" data-tab="plots">Live Plots</button>
+                    <button class="bottom-tab" data-tab="gravity">Gravity Vector</button>
+                    <button class="bottom-tab" data-tab="fft">FFT Spectrum</button>
+                    <button class="bottom-tab" data-tab="stokes">Stokes Analysis</button>
+                </div>
+
+                <!-- Live Plots Tab -->
+                <div class="bottom-tab-content active" data-tab-content="plots">
+                    <div class="plot-container">
+                        <span class="plot-title">g-Residual (%)</span>
+                        <canvas id="chart-gres"></canvas>
+                    </div>
+                    <div class="plot-container">
+                        <span class="plot-title">RPM (Setpoint vs Actual)</span>
+                        <canvas id="chart-rpm"></canvas>
+                    </div>
+                    <div class="plot-container">
+                        <span class="plot-title">Power (W)</span>
+                        <canvas id="chart-power"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gravity Vector Tab -->
+                <div class="bottom-tab-content" data-tab-content="gravity">
+                    <div class="plot-container" style="flex:2">
+                        <span class="plot-title">Gravity Components (m/s²)</span>
+                        <canvas id="chart-gvec"></canvas>
+                    </div>
+                    <div class="plot-container">
+                        <span class="plot-title">g-Magnitude</span>
+                        <canvas id="chart-gmag"></canvas>
+                    </div>
+                </div>
+
+                <!-- FFT Tab -->
+                <div class="bottom-tab-content" data-tab-content="fft">
+                    <div class="plot-container" style="flex:1">
+                        <span class="plot-title">Vibration FFT Spectrum</span>
+                        <canvas id="chart-fft"></canvas>
+                    </div>
+                </div>
+
+                <!-- Stokes Tab -->
+                <div class="bottom-tab-content" data-tab-content="stokes">
+                    <div style="padding:12px; font-family: var(--font-body); color: var(--text-secondary); font-size:0.8rem; flex:1">
+                        <h4 style="color: var(--electric-cyan); margin-bottom:8px; font-family: var(--font-heading);">Stokes Settling Analysis</h4>
+                        <div id="stokes-results" style="font-family: var(--font-mono); font-size:0.75rem; line-height:1.8">
+                            Select a sample type to analyze sedimentation behavior...
+                        </div>
+                        <div style="margin-top:8px">
+                            <select id="stokes-sample" style="width:200px">
+                                <option value="">— Select Sample —</option>
+                                <option value="Human Osteocyte">Human Osteocyte (7.5μm)</option>
+                                <option value="E. coli">E. coli (0.5μm)</option>
+                                <option value="HeLa Cell">HeLa Cell (10μm)</option>
+                                <option value="Red Blood Cell">Red Blood Cell (3.5μm)</option>
+                                <option value="Yeast">Yeast (3μm)</option>
+                                <option value="Arabidopsis Seed">Arabidopsis Seed (150μm)</option>
+                                <option value="Protein Crystal">Lysozyme Crystal (50μm)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── RIGHT PANEL ─── -->
+        <div id="right-panel">
+
+            <!-- Live Data Readouts -->
+            <div class="panel" id="panel-readouts">
+                <div class="panel-header">📊 Live Data</div>
+                <div class="panel-body">
+                    <div class="readout-row">
+                        <span class="readout-label">g-Residual</span>
+                        <div>
+                            <span class="readout-value" id="readout-gres">100.0</span>
+                            <span class="readout-unit">%g</span>
+                        </div>
+                    </div>
+                    <div style="margin: 4px 0 8px 0">
+                        <span class="quality-badge poor" id="quality-badge">POOR</span>
+                    </div>
+
+                    <div class="readout-row">
+                        <span class="readout-label">g-Residual (abs)</span>
+                        <div>
+                            <span class="readout-value" id="readout-gres-abs" style="font-size:1rem">9.807</span>
+                            <span class="readout-unit">m/s²</span>
+                        </div>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">RPM Axis 1</span>
+                        <div>
+                            <span class="readout-value" id="readout-rpm1" style="font-size:1rem; color:var(--electric-cyan)">0.00</span>
+                            <span class="readout-unit">RPM</span>
+                        </div>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">RPM Axis 2</span>
+                        <div>
+                            <span class="readout-value" id="readout-rpm2" style="font-size:1rem; color:var(--success-green)">0.00</span>
+                            <span class="readout-unit">RPM</span>
+                        </div>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">Centrifugal a</span>
+                        <div>
+                            <span class="readout-value" id="readout-centrifugal" style="font-size:1rem">0.000</span>
+                            <span class="readout-unit">m/s²</span>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="readout-row">
+                        <span class="readout-label">g⃗ (x)</span>
+                        <span class="readout-value" id="readout-gx" style="font-size:0.9rem; color:#FF6666">0.000</span>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">g⃗ (y)</span>
+                        <span class="readout-value" id="readout-gy" style="font-size:0.9rem; color:#66FF66">0.000</span>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">g⃗ (z)</span>
+                        <span class="readout-value" id="readout-gz" style="font-size:0.9rem; color:#6666FF">-9.807</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="readout-row">
+                        <span class="readout-label">Orientation</span>
+                        <span class="readout-value" id="readout-euler" style="font-size:0.75rem; color:var(--text-secondary)">R:0° P:0° Y:0°</span>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">Elapsed</span>
+                        <span class="readout-value" id="readout-elapsed" style="font-size:0.9rem; color:var(--text-secondary)">0.0 s</span>
+                    </div>
+                    <div class="readout-row">
+                        <span class="readout-label">Samples</span>
+                        <span class="readout-value" id="readout-samples" style="font-size:0.9rem; color:var(--text-dim)">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Validator -->
+            <div class="panel" id="panel-connection">
+                <div class="panel-header">🔌 Connection</div>
+                <div class="panel-body">
+                    <div class="geometry-row">
+                        <span class="geometry-label">Mode</span>
+                        <select id="op-mode-select" style="width:110px">
+                            <option value="SIMULATION" selected>Simulation</option>
+                            <option value="HARDWARE">Hardware</option>
+                            <option value="HYBRID">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="divider"></div>
+                    <div style="font-size:0.75rem; color: var(--text-dim); line-height:1.9">
+                        <div class="flex items-center gap-sm"><span class="status-dot warn" id="dot-physics"></span> <span id="label-physics">Physics Engine</span></div>
+                        <div class="flex items-center gap-sm"><span class="status-dot warn" id="dot-renderer"></span> <span id="label-renderer">3D Renderer</span></div>
+                        <div class="flex items-center gap-sm"><span class="status-dot warn" id="dot-logger"></span> <span id="label-logger">Data Logger</span></div>
+                        <div class="flex items-center gap-sm"><span class="status-dot warn" id="dot-motor"></span> <span id="label-motor">Motor HW (Simulated)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Logging -->
+            <div class="panel" id="panel-logging">
+                <div class="panel-header">💾 Data Logging</div>
+                <div class="panel-body">
+                    <div class="input-group" style="margin-bottom:8px">
+                        <span class="input-label">Session Name</span>
+                        <input type="text" class="input-field" id="session-name" value="Experiment_001" style="font-size:0.8rem; padding:4px 8px">
+                    </div>
+                    <div class="control-buttons" style="margin:4px 0">
+                        <button class="btn btn-primary btn-sm" id="btn-log-start">▶ LOG</button>
+                        <button class="btn btn-ghost btn-sm" id="btn-log-stop" disabled>■ STOP</button>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size:0.7rem; color: var(--text-dim); margin-top:4px">
+                        Rows: <span id="log-rows">0</span> | 
+                        <span id="log-rate-display">10 Hz</span>
+                    </div>
+                    <button class="btn btn-ghost btn-sm w-full" id="btn-export-csv" style="margin-top:8px">📥 Export CSV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification container -->
+<div id="toast-container"></div>
+
+<!-- ═══════════ MAIN APPLICATION SCRIPT ═══════════ -->
+<script src="js/app.js"></script>
+
+</body>
+</html>

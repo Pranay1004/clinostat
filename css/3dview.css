@@ -1,0 +1,46 @@
+/* ClinoSim Pro — 3D Viewport Styles */
+
+#viewport-container {
+    background:
+        radial-gradient(ellipse at center, rgba(6, 10, 16, 0.9), var(--deep-space)),
+        var(--deep-space);
+}
+
+/* Viewport camera preset buttons */
+.viewport-controls {
+    position: absolute;
+    top: var(--sp-sm);
+    right: var(--sp-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-xs);
+    z-index: 10;
+}
+
+/* FPS counter */
+.fps-counter {
+    position: absolute;
+    top: var(--sp-sm);
+    right: var(--sp-sm);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    z-index: 10;
+}
+
+/* Dimension labels overlay */
+.dim-label-overlay {
+    position: absolute;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--electric-cyan);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1px 4px;
+    border-radius: 2px;
+    white-space: nowrap;
+    z-index: 5;
+}

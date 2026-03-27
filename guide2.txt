@@ -1,0 +1,760 @@
+# CLINOSIM PRO — MASTER BUILD PROMPT
+### Microgravity Digital Twin Software | Ground Simulation for PS4 Spaceflight Experiment
+### Version: 1.0 | Classification: Proprietary + Open Source (Dual License)
+### Prompt Type: AI Software Build Directive
+
+---
+
+## ⚠️ MANDATORY PRE-BUILD INSTRUCTIONS — READ BEFORE WRITING A SINGLE LINE OF CODE
+
+Before building anything, you MUST:
+
+1. **SCRAPE & RESEARCH** the following sources exhaustively for all content related to 1D Clinostat, 2D Clinostat, 3D Clinostat, Random Positioning Machine (RPM), microgravity simulation, simulated microgravity biology, clinostat hardware design, motor control for clinostats, and residual gravity calculation:
+   - PubMed / NCBI (https://pubmed.ncbi.nlm.nih.gov)
+   - NASA Technical Reports Server (https://ntrs.nasa.gov)
+   - ESA Publications (https://www.esa.int/Science_Exploration)
+   - arXiv (https://arxiv.org) — physics, biology, robotics sections
+   - IEEE Xplore (https://ieeexplore.ieee.org)
+   - ResearchGate (https://www.researchgate.net)
+   - Springer / Nature / Elsevier journals
+   - GitHub repositories — search: clinostat, RPM simulator, microgravity simulation, 3D clinostat
+   - YouTube — search: clinostat design, clinostat biology, microgravity simulation hardware
+   - Conference proceedings: IAC (International Astronautical Congress), COSPAR, ISGP
+   - Frontiers in Space Technologies, npj Microgravity journal
+   - DLR (German Aerospace Center) publications
+   - JAXA and ISRO research archives
+
+2. **COMPILE A CITATIONS FILE** — every formula, every geometric design, every biological reference, every hardware specification used in this software MUST have a proper citation in the format:
+   ```
+   [CITE-XXX] Author(s), "Title", Journal/Source, Volume, Pages, Year, DOI/URL
+   ```
+
+3. **CREATE A DEDICATED FILE**: `MATHS_CALCULATIONS_README.md` that lists EVERY mathematical formula used in the software with:
+   - Formula in LaTeX notation
+   - Plain English explanation
+   - Variable definitions
+   - Source citation [CITE-XXX]
+   - Which module in code uses it
+
+4. **UPDATE POLICY**: The software must include an auto-update mechanism that, on every launch or manual trigger, checks for new publications and data from the above sources, appends new findings to the citations database, and flags any formula or design that has been superseded by newer research.
+
+5. **DUAL LICENSE HEADER**: Every source file must begin with:
+   ```
+   /*
+    * ClinoSim Pro — Microgravity Digital Twin
+    * License: Proprietary + Apache 2.0 Open Source (Dual)
+    * All scientific content is cited. See CITATIONS.md
+    * Original contributions are copyright of the authors.
+    */
+   ```
+
+---
+
+## PROJECT IDENTITY
+
+**Software Name:** ClinoSim Pro
+**Tagline:** Ground-Truth Microgravity. From Earth to Orbit.
+**Mission:** To provide the most scientifically accurate, hardware-integrated, visually immersive digital twin of 1D, 2D, and 3D clinostat systems for ground-level simulation of microgravity conditions, validated against actual spaceflight data from the PS4 mission.
+**Target Users:** Aerospace biologists, mechatronics engineers, space medicine researchers, university labs, ISRO/ESA/NASA payload teams.
+**Deployment:** Desktop application (Electron), Web App (optional), Python backend service.
+
+---
+
+## PHASE 1 — BUILD PRIORITY: 1D AND 2D CLINOSTAT (FULL)
+## PHASE 2 — BUILD GUIDE (ARCHITECTURE ONLY): 3D Clinostat (background scaffolding, not full UI yet)
+
+---
+
+## SECTION 1: CLINOSTAT GEOMETRY & DESIGN — UNIQUE PER TYPE
+
+### ⚙️ 1D CLINOSTAT — Geometry & Design
+
+**Physical Description:**
+- Single rotation axis — horizontal, fixed
+- One motor drives one cylindrical/rectangular outer frame
+- Sample (payload) sits at geometric center of the rotating frame
+- Frame is typically a flat disc or rectangular cage
+- Rotation at 1–10 RPM (slow) or up to 60 RPM (fast clinostat)
+
+**Geometric Parameters (all user-adjustable in UI):**
+- Frame outer diameter: D_outer (default 200mm)
+- Frame inner diameter: D_inner (default 80mm) — payload space
+- Frame thickness/depth: t (default 20mm)
+- Frame material: selectable (Aluminum 6061, Acrylic, PLA, PEEK)
+- Payload chamber: cylindrical, centered, diameter selectable (default 60mm), height selectable (default 50mm)
+- Motor mount: rear axial mount
+- Bearing type: selectable (deep groove ball bearing, angular contact)
+
+**CAD Representation:**
+- Render as parametric 3D model in Three.js
+- Show: outer ring, inner payload cylinder, motor shaft, bearing seats, mounting brackets
+- Highlight center of rotation with crosshair axis
+- Show gravity vector arrow (downward, red) and time-averaged gravity vector (blue, approaches zero with rotation)
+
+**1D Physics:**
+- Gravity vector in rotating frame:
+  ```
+  g_x(t) = g * sin(ω*t)
+  g_y(t) = g * cos(ω*t)
+  g_z(t) = 0  [along rotation axis]
+  ```
+- Time-averaged: g_avg = 0 (ideal), residual depends on RPM and sample offset from center
+- Centrifugal acceleration: a_c = ω² * r (must be minimized by keeping sample at r ≈ 0)
+- Sedimentation nullification condition: ω >> (2*g) / (π * v_s) where v_s is Stokes settling velocity
+
+**Limitations to display in UI:**
+- Only nullifies gravity in 2D plane — z-axis gravity persists along rotation axis
+- Not suitable for elongated organisms or asymmetric samples
+- Effective only for slow-settling biological samples
+
+---
+
+### ⚙️ 2D CLINOSTAT / RANDOM POSITIONING MACHINE (RPM) — Geometry & Design
+
+**Physical Description:**
+- Two independent rotation axes — inner and outer frames (gimbal configuration)
+- Outer frame rotates about vertical or horizontal axis
+- Inner frame rotates about an axis perpendicular to outer
+- Two independent motors (one per axis)
+- Sample sits at geometric center of inner frame
+- Can operate in: Constant Speed mode, Random Walk mode, Optimized RPM mode
+
+**Geometric Parameters (all user-adjustable):**
+- Outer frame: rectangular or circular, outer width W_outer (default 350mm), height H_outer (default 350mm)
+- Inner frame: circular ring, diameter D_inner_frame (default 200mm), depth 30mm
+- Frame material: selectable
+- Payload chamber: sphere or cylinder, diameter selectable (default 60mm)
+- Axle length, diameter: adjustable
+- Inter-frame clearance: minimum 10mm, validated by collision detection engine
+- Motor mount: one on each axis, independently driven
+
+**CAD Representation:**
+- Full Gimbal render: outer rectangular frame + inner circular ring + payload sphere
+- Show both rotation axes (Axis 1 = blue, Axis 2 = green)
+- Animate each axis independently
+- Show instantaneous gravity vector (red arrow) tumbling in 3D space
+- Show time-averaged gravity vector shrinking toward zero (blue arrow fading)
+- Color-coded frames: outer = dark steel, inner = matte aluminum, payload = amber/glass
+
+**2D Physics — Three Operating Modes:**
+
+Mode 1 — Constant Speed:
+```
+ω1 = constant, ω2 = constant (ω1 ≠ ω2, irrational ratio preferred)
+g_vec(t) = R_z(ω1*t) * R_x(ω2*t) * [0, 0, -g]
+g_residual = ||(1/T) ∫ g_vec(t) dt|| → 0 as T → ∞
+```
+
+Mode 2 — Random Walk:
+```
+At each interval Δt, randomly select new ω1, ω2 from range [-ω_max, +ω_max]
+Direction changes are smooth (acceleration-limited)
+Randomization ensures isotropic gravity distribution over time
+```
+
+Mode 3 — Optimized RPM (Johannes algorithm):
+```
+Minimize: ∫₀ᵀ ||g_avg(t)||² dt
+Subject to: |ω| ≤ ω_max, |α| ≤ α_max
+Uses dynamic programming or gradient descent on rotation sequence
+```
+
+**Residual gravity quality metric (display live):**
+```
+g_res% = (||g_avg|| / g_Earth) * 100
+Target: g_res < 0.01g  (i.e., < 1% of Earth gravity)
+```
+
+---
+
+### ⚙️ 3D CLINOSTAT — Architecture Guide (Background Scaffold Only in Phase 1)
+
+**Physical Description:**
+- Three independent rotation axes OR advanced 2-axis with optimized algorithms approaching true 3D isotropy
+- Most complex mechanically — nested triple gimbal or cable-driven parallel mechanism
+- Closest ground approximation to ISS microgravity (< 10⁻⁶ g achievable)
+- Used for mammalian embryology, organ-on-chip, advanced protein crystallization
+
+**Phase 1 Deliverable for 3D:**
+- Create module file structure: `clinostat_3d/` folder with placeholder files
+- Create `3D_ARCHITECTURE.md` — full design document
+- Create empty but annotated functions for all 3D physics calculations
+- Render a greyed-out / locked 3D Clinostat tab in the UI with "Coming in Phase 2" badge
+- Show wireframe 3D geometry of triple gimbal in the 3D viewport (non-interactive)
+
+---
+
+## SECTION 2: FULL SOFTWARE ARCHITECTURE
+
+```
+ClinoSimPro/
+├── main.js                        # Electron entry point
+├── index.html                     # Main app shell
+├── package.json
+├── LICENSE_PROPRIETARY.txt
+├── LICENSE_APACHE.txt
+├── CITATIONS.md                   # All scientific citations
+├── MATHS_CALCULATIONS_README.md   # Every formula with source
+├── CHANGELOG.md
+│
+├── frontend/
+│   ├── css/
+│   │   ├── main.css               # Global styles, CSS variables
+│   │   ├── dashboard.css          # Dashboard layout
+│   │   ├── panels.css             # Side panels, control panels
+│   │   ├── viewer3d.css           # 3D viewport styling
+│   │   └── plots.css              # Chart and plot styling
+│   │
+│   ├── js/
+│   │   ├── app.js                 # App bootstrap, tab routing
+│   │   ├── ui.js                  # UI state management
+│   │   ├── viewer3d.js            # Three.js scene, camera, controls
+│   │   ├── geometry/
+│   │   │   ├── clinostat1d.js     # 1D parametric geometry builder
+│   │   │   ├── clinostat2d.js     # 2D gimbal geometry builder
+│   │   │   └── clinostat3d.js     # 3D scaffold geometry
+│   │   ├── physics/
+│   │   │   ├── quaternion.js      # Quaternion math engine
+│   │   │   ├── gravity_vector.js  # g-vector calculation per mode
+│   │   │   ├── residual_g.js      # Residual g integrator
+│   │   │   ├── centrifugal.js     # Centrifugal force calculator
+│   │   │   ├── stokes.js          # Stokes settling velocity
+│   │   │   └── rpm_optimizer.js   # Johannes / gradient descent optimizer
+│   │   ├── motor/
+│   │   │   ├── motor_control.js   # Motor command interface
+│   │   │   ├── pid.js             # PID controller simulation
+│   │   │   ├── ethernet.js        # Ethernet/WiFi communication layer
+│   │   │   └── packet.js          # Data packet builder/parser/validator
+│   │   ├── data/
+│   │   │   ├── logger.js          # CSV data logger
+│   │   │   ├── session.js         # Experiment session manager
+│   │   │   └── exporter.js        # Export: CSV, JSON, HDF5
+│   │   ├── plots/
+│   │   │   ├── live_plots.js      # Chart.js live plot manager
+│   │   │   ├── fft.js             # FFT vibration spectrum
+│   │   │   └── comparison.js      # Sim vs flight data overlay
+│   │   └── citations/
+│   │       ├── citations_db.js    # In-app citations database
+│   │       └── updater.js         # Auto-update citation checker
+│   │
+│   └── assets/
+│       ├── fonts/
+│       ├── icons/
+│       └── textures/
+│
+├── backend/
+│   ├── server.py                  # FastAPI main server
+│   ├── physics_engine.py          # Python physics (NumPy/SciPy)
+│   ├── motor_driver.py            # Ethernet motor communication
+│   ├── cad_engine.py              # CadQuery parametric CAD
+│   ├── csv_logger.py              # Data file management
+│   ├── research_scraper.py        # Web scraper for citations
+│   └── requirements.txt
+│
+├── clinostat_3d/                  # Phase 2 scaffold
+│   ├── 3D_ARCHITECTURE.md
+│   ├── physics_3d.py              # Annotated empty functions
+│   └── geometry_3d.js             # Wireframe only
+│
+└── docs/
+    ├── USER_MANUAL.md
+    ├── HARDWARE_SETUP.md
+    ├── API_REFERENCE.md
+    └── PS4_MISSION_NOTES.md
+```
+
+---
+
+## SECTION 3: UI/UX — FULL SPECIFICATION
+
+### Visual Design Language
+- **Theme:** Deep space dark — not just black, but layered deep navy, midnight blue, dark slate
+- **Accent colors:** Electric cyan (#00D4FF) primary, deep blue (#0055FF) secondary, amber (#FFB800) for warnings, red (#FF3355) for errors, green (#00FF88) for healthy/nominal
+- **Typography:** Rajdhani (headers/labels, technical feel), Share Tech Mono (data readouts, numbers, codes), Exo 2 (body/UI text)
+- **Borders:** Subtle glowing borders — 1px solid with box-shadow glow in accent color
+- **Backgrounds:** Layered gradients — not flat. Use subtle grid overlay (CSS grid lines) to give engineering blueprint feel
+- **Animations:** Smooth, purposeful. No janky transitions. Rotation in 3D viewer must be buttery smooth (60fps minimum)
+- **Panels:** Glassmorphism-lite — semi-transparent with backdrop-filter blur, dark tinted
+
+### Layout — Main Window (1440px reference width)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  TOPBAR: Logo | Mode Selector [1D|2D|3D] | Connection Status    │
+│           | Session Timer | Mission Clock | Settings | Help      │
+├──────────────┬──────────────────────────────┬───────────────────┤
+│  LEFT PANEL  │      3D VIEWPORT             │   RIGHT PANEL     │
+│  (280px)     │      (flex, main area)       │   (300px)         │
+│              │                              │                   │
+│ ┌──────────┐ │   [Three.js 3D Render]       │ ┌───────────────┐ │
+│ │ MOTOR    │ │   Clinostat rotating live    │ │ LIVE DATA     │ │
+│ │ CONTROL  │ │   Gravity vector arrow       │ │ READOUTS      │ │
+│ │          │ │   Axis indicators            │ │               │ │
+│ │ Axis 1   │ │   Payload chamber visible    │ │ g_residual    │ │
+│ │ RPM ─●─  │ │   Frame dimensions shown     │ │ RPM Axis 1   │ │
+│ │ Dir [←→] │ │                              │ │ RPM Axis 2   │ │
+│ │          │ ├──────────────────────────────┤ │ Temp Motor 1 │ │
+│ │ Axis 2   │ │   BOTTOM PLOT STRIP          │ │ Temp Motor 2 │ │
+│ │ RPM ─●─  │ │   [g_res chart][RPM chart]   │ │ Power (W)    │ │
+│ │ Dir [←→] │ │   [Temp chart][FFT chart]    │ │ Packets OK   │ │
+│ └──────────┘ │                              │ │ Latency(ms)  │ │
+│              │                              │ └───────────────┘ │
+│ ┌──────────┐ │                              │ ┌───────────────┐ │
+│ │GEOMETRY  │ │                              │ │ CONNECTION    │ │
+│ │EDITOR    │ │                              │ │ VALIDATOR     │ │
+│ │          │ │                              │ │               │ │
+│ │D_outer   │ │                              │ │ MCU IP ____   │ │
+│ │D_inner   │ │                              │ │ Port ______   │ │
+│ │Thickness │ │                              │ │ [CONNECT]     │ │
+│ │Material  │ │                              │ │ ● Motor 1 OK  │ │
+│ │Payload Ø │ │                              │ │ ● Motor 2 OK  │ │
+│ └──────────┘ │                              │ │ ● IMU OK      │ │
+│              │                              │ │ ● Power OK    │ │
+│ ┌──────────┐ │                              │ └───────────────┘ │
+│ │OPERATION │ │                              │                   │
+│ │MODE      │ │                              │ ┌───────────────┐ │
+│ │          │ │                              │ │ DATA LOGGING  │ │
+│ │○ Const   │ │                              │ │               │ │
+│ │○ Random  │ │                              │ │ Session Name  │ │
+│ │○ Optimiz │ │                              │ │ [Start Log]   │ │
+│ └──────────┘ │                              │ │ [Export CSV]  │ │
+│              │                              │ │ Rows: 0       │ │
+│ [▶ START]    │                              │ └───────────────┘ │
+│ [■ STOP]     │                              │                   │
+│ [⟳ RESET]   │                              │                   │
+└──────────────┴──────────────────────────────┴───────────────────┘
+│                     BOTTOM TABBED SECTION                        │
+│  [Live Plots] [Session History] [Citations] [Math Reference]     │
+│  [Hardware Diagnostics] [Export] [PS4 Mission Sync]              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### All UI Panels — Detailed Specification
+
+#### TOP BAR
+- Left: ClinoSim Pro logo (glowing cyan text, small mission patch icon)
+- Center: Mode Selector — large glowing tab buttons [1D CLINOSTAT] [2D CLINOSTAT / RPM] [3D CLINOSTAT 🔒]
+- Right: Connection indicator (green pulse = connected, red = disconnected), Session timer (HH:MM:SS), Mission clock (synced to PS4 timeline if enabled), Settings gear, Help (?)
+
+#### LEFT PANEL — Motor Control
+- Per-axis sliders for RPM (0–60 RPM, 0.1 resolution)
+- Direction toggle (CW / CCW)
+- Acceleration ramp control (0–100% over selectable time)
+- Emergency STOP button (large red, always visible)
+- Motor mode: Manual / PID Controlled / Auto-Optimized
+- PID tuning sliders: Kp, Ki, Kd (expandable sub-panel)
+
+#### LEFT PANEL — Geometry Editor
+- All frame dimensions as numeric inputs with live update to 3D model
+- Material dropdown → auto-updates mass, inertia tensor display
+- Payload chamber: shape selector (cylinder/sphere), diameter, height/depth
+- Collision detection indicator: green = no clash, red = geometry collision detected
+- Mass and center of mass display (live calculation)
+- Inertia tensor display (3x3 matrix, live)
+- Export geometry button → STL download
+
+#### LEFT PANEL — Operation Mode (2D only)
+- Radio buttons: Constant Speed / Random Walk / Optimized RPM
+- Random Walk: interval duration slider, max angular velocity slider
+- Optimized RPM: target g_residual input, max iterations input, [Run Optimizer] button
+- Show optimization convergence plot
+
+#### RIGHT PANEL — Live Data Readouts
+- Large numerical displays (Share Tech Mono font, glowing)
+- g_residual: shown as percentage and absolute (m/s²)
+- g_residual quality badge: EXCELLENT (<0.01g) / GOOD (<0.05g) / FAIR (<0.1g) / POOR
+- RPM actual vs setpoint per axis (color coded: white=setpoint, cyan=actual)
+- Motor temperatures with color: green<50°C, yellow<70°C, red>70°C
+- Power consumption (W) per motor and total
+- Packet statistics: sent, received, lost, latency (ms)
+
+#### RIGHT PANEL — Connection Validator
+- IP address input field
+- Port input (default 8080)
+- Protocol: TCP / UDP / WebSocket selector
+- [CONNECT] button — triggers handshake sequence
+- Component checklist with live status:
+  - Motor Controller ● (green/red)
+  - IMU Sensor ● 
+  - Encoder Axis 1 ●
+  - Encoder Axis 2 ●
+  - Temperature Sensors ●
+  - Power Module ●
+- Packet exchange log (last 10 packets, scrollable)
+- [SEND TEST PACKET] button
+- [VALIDATE ALL] button — runs full diagnostic sweep
+
+#### RIGHT PANEL — Data Logging
+- Session name input
+- [▶ START LOG] / [■ STOP LOG] toggle
+- Live row counter
+- Log file path display
+- [EXPORT CSV] — immediate export
+- [EXPORT JSON] — structured export
+- Auto-save interval selector
+
+#### BOTTOM SECTION — Live Plots (Chart.js, all real-time)
+- **Plot 1:** g_residual (%) vs Time — line chart, cyan, auto-scaling Y, rolling 60s window
+- **Plot 2:** RPM Axis 1 (setpoint vs actual) vs Time — dual line
+- **Plot 3:** RPM Axis 2 (setpoint vs actual) vs Time — dual line
+- **Plot 4:** Motor Temperatures vs Time — multi-line (Motor 1 = orange, Motor 2 = red)
+- **Plot 5:** Power Consumption (W) vs Time
+- **Plot 6:** FFT Vibration Spectrum — bar chart, frequency domain, identifies resonance peaks
+- **Plot 7:** Gravity Vector XYZ components vs Time — 3-line chart (R/G/B per axis)
+- All plots: zoomable, pannable, downloadable as PNG, exportable as CSV
+
+#### BOTTOM TAB — Citations
+- Searchable table of all citations used
+- Columns: [ID] [Authors] [Title] [Journal] [Year] [DOI] [Used In]
+- Filter by: module, year, type (paper/conference/standard/github)
+- [Check for Updates] button — triggers scraper for new publications
+- Last updated timestamp
+
+#### BOTTOM TAB — Math Reference
+- Renders MATHS_CALCULATIONS_README.md in-app
+- LaTeX rendered via KaTeX.js
+- Searchable by formula name or variable
+- Each formula links to its source citation
+
+#### BOTTOM TAB — PS4 Mission Sync
+- Input: PS4 mission timeline file (JSON/CSV)
+- Sync button — aligns simulation time with mission clock
+- Overlay: ground simulation data vs expected flight data
+- Deviation plot: |g_sim - g_flight| vs time
+- Mission phase markers (launch, orbit insertion, experiment window, deorbit)
+
+---
+
+## SECTION 4: PHYSICS ENGINE — EXACT FORMULAS
+
+All of these must appear in MATHS_CALCULATIONS_README.md with citations.
+
+### Quaternion Rotation (no gimbal lock)
+```
+q = [cos(θ/2), sin(θ/2)*nx, sin(θ/2)*ny, sin(θ/2)*nz]
+q_total = q2 ⊗ q1  (Hamilton product)
+v_rotated = q ⊗ v ⊗ q*
+```
+Source: Hamilton (1843), Kuipers (1999) "Quaternions and Rotation Sequences"
+
+### Gravity Vector in Rotating Frame
+```
+1D: g(t) = [g*sin(ω*t), g*cos(ω*t), 0]
+2D Constant: g(t) = R_outer(ω1*t) · R_inner(ω2*t) · [0, 0, -g]
+2D Random: g(t) = R(θ1(t)) · R(θ2(t)) · [0, 0, -g]  where θ changes stochastically
+```
+Source: Briegleb (1992), Mesland (1992), Borst & van Loon (2009)
+
+### Residual Gravity (Time-Averaged)
+```
+g_avg = (1/T) ∫₀ᵀ g(t) dt
+g_res = ||g_avg||
+Quality: g_res/g_Earth * 100 [%]
+```
+Source: Schwarzenberg-Czerny (1993), van Loon (2007)
+
+### Centrifugal Acceleration
+```
+a_c = ω² · r
+where r = distance from rotation center to sample geometric center
+Requirement: r < 1mm for g_c < 0.001g at ω = 1 RPM
+```
+Source: Herranz et al. (2013), Wuest et al. (2017)
+
+### Stokes Settling Velocity (biological sample sedimentation)
+```
+v_s = (2 * r_cell² * (ρ_cell - ρ_medium) * g) / (9 * μ)
+Clinostat nullification condition: ω >> (2*g) / (π * v_s)
+```
+Source: Stokes (1851), Briegleb (1992) [CITE-BIO-001]
+
+### Moment of Inertia (rotating frame)
+```
+I_ring = (1/2) * m * (R_outer² + R_inner²)
+I_total = I_frame + I_payload + I_motor_rotor
+α = τ / I_total
+```
+Source: Meriam & Kraige "Engineering Mechanics: Dynamics"
+
+### PID Motor Control
+```
+e(t) = ω_setpoint - ω_actual
+u(t) = Kp*e(t) + Ki*∫e(t)dt + Kd*(de/dt)
+Anti-windup: clamp ∫e(t) to [-I_max, +I_max]
+```
+Source: Åström & Hägglund (1995) "PID Controllers: Theory, Design, and Tuning"
+
+### Euler Angles to Rotation Matrix (for display only, not simulation)
+```
+R = Rz(ψ) · Ry(θ) · Rx(φ)
+Gimbal lock occurs when θ = ±π/2 — NEVER use Euler for simulation, use quaternions
+```
+Source: Diebel (2006) "Representing Attitude: Euler Angles, Unit Quaternions..."
+
+### Vibration / FFT Analysis
+```
+X[k] = Σ x[n] * e^(-j2πkn/N)   (DFT)
+Use Welch's method for power spectral density
+Resonance detection: flag peaks where S(f) > threshold
+```
+Source: Cooley & Tukey (1965), Welch (1967)
+
+### Inertia Tensor (for 3D scaffold)
+```
+I = [[Ixx, -Ixy, -Ixz],
+     [-Ixy, Iyy, -Iyz],
+     [-Ixz, -Iyz, Izz]]
+Ixx = ∫(y²+z²)dm, etc.
+```
+Source: Goldstein "Classical Mechanics", 3rd Ed.
+
+---
+
+## SECTION 5: MOTOR CONTROL & ETHERNET COMMUNICATION
+
+### Hardware Assumed
+- MCU: Raspberry Pi 4 / STM32H7 with Ethernet PHY
+- Motor Driver: ODrive v3.6 or TMC5160 SPI
+- Encoder: Incremental quadrature, 4096 CPR
+- IMU: ICM-42688-P (6-axis, 32kHz output rate)
+- Temperature: PT100 RTD on each motor
+- Power: INA226 current/voltage sensor on each axis
+
+### Communication Protocol (Ethernet/WiFi)
+- Transport: TCP sockets (reliable) for commands, UDP for streaming telemetry
+- Port: 8080 (commands), 8081 (telemetry stream)
+- Packet format (JSON):
+```json
+{
+  "packet_id": 1042,
+  "timestamp_ms": 1234567890,
+  "type": "CMD" | "ACK" | "TELEM" | "HEARTBEAT" | "ERROR",
+  "payload": {
+    "axis": 1,
+    "rpm_setpoint": 5.0,
+    "direction": "CW",
+    "mode": "PID"
+  },
+  "crc32": "A3F2C1D0"
+}
+```
+- CRC32 validation on every packet — reject and flag corrupted packets
+- Heartbeat every 500ms — if missed 3 consecutive → CONNECTION LOST alert
+- Command acknowledgement: every CMD must receive ACK within 100ms or retry (max 3)
+- Telemetry stream: 10Hz minimum, 100Hz maximum (user selectable)
+
+### Telemetry Packet (from hardware to software):
+```json
+{
+  "packet_id": 5032,
+  "timestamp_ms": 1234567900,
+  "type": "TELEM",
+  "payload": {
+    "axis1_rpm_actual": 4.97,
+    "axis1_rpm_setpoint": 5.00,
+    "axis2_rpm_actual": 7.23,
+    "axis2_rpm_setpoint": 7.00,
+    "axis1_temp_c": 42.3,
+    "axis2_temp_c": 44.1,
+    "axis1_current_A": 0.85,
+    "axis2_current_A": 0.92,
+    "imu_ax": 0.0023,
+    "imu_ay": -0.0011,
+    "imu_az": 0.0034,
+    "encoder1_counts": 204831,
+    "encoder2_counts": 301042
+  },
+  "crc32": "B7A3E2F1"
+}
+```
+
+### Connection Validation Sequence (on [VALIDATE ALL])
+1. Send PING packet → expect PONG within 50ms
+2. Request hardware manifest → validate expected components
+3. Send RPM=0 command to all axes → confirm ACK
+4. Request telemetry burst (10 packets) → validate continuity and CRC
+5. Check IMU noise floor → flag if > 0.01g RMS
+6. Check encoder counts moving at RPM=0 → flag false motion
+7. Report: PASS / WARN / FAIL per component
+
+---
+
+## SECTION 6: CAD & GEOMETRY ENGINE
+
+### Requirements
+- All geometry is parametric — changing any dimension live-updates the 3D model
+- Geometry defined in JavaScript (Three.js geometry builders) and mirrored in Python (CadQuery)
+- STL export via CadQuery backend
+- STEP export for professional CAD tools
+
+### 1D Clinostat Geometry Builder
+```javascript
+function build1DClinosta(params) {
+  // params: { D_outer, D_inner, thickness, material, payload_diameter, payload_height }
+  // Returns: Three.js Group with all components
+  // Components: OuterRing, InnerPayloadCylinder, MotorMount, BearingSeats, AxisLine
+}
+```
+
+### 2D Clinostat Geometry Builder
+```javascript
+function build2DClinosta(params) {
+  // params: { W_outer, H_outer, D_inner_frame, frame_depth, clearance, payload_shape, payload_size }
+  // Returns: Three.js Group
+  // Components: OuterFrame(rect), InnerRing(circular), PayloadChamber, Axis1, Axis2, Motors x2
+}
+```
+
+### Collision Detection
+```javascript
+function checkFrameCollision(outerParams, innerParams) {
+  // Returns: { collision: bool, minClearance_mm: float, collisionPoints: [] }
+  // Uses bounding box + swept volume analysis
+}
+```
+
+### Inertia Tensor Calculator
+```javascript
+function calculateInertiaTensor(geometry, material) {
+  // Uses density from material database
+  // Returns: 3x3 inertia tensor + scalar mass + center of mass vector
+}
+```
+
+---
+
+## SECTION 7: DATA LOGGING & CSV EXPORT
+
+### CSV Schema (auto-generated header)
+```
+timestamp_ms, session_id, clinostat_mode, axis1_rpm_setpoint, axis1_rpm_actual,
+axis2_rpm_setpoint, axis2_rpm_actual, g_residual_percent, g_vec_x, g_vec_y, g_vec_z,
+quaternion_w, quaternion_x, quaternion_y, quaternion_z, motor1_temp_c, motor2_temp_c,
+motor1_power_w, motor2_power_w, imu_ax, imu_ay, imu_az, packets_sent, packets_received,
+packets_lost, latency_ms, notes
+```
+
+### Session Management
+- Each experiment = one session with UUID
+- Sessions stored in: `sessions/YYYY-MM-DD_HH-MM-SS_[session_name]/`
+- Files per session: `data.csv`, `metadata.json`, `plots/`, `geometry_snapshot.json`
+- Compare sessions: overlay plots from two different sessions
+
+---
+
+## SECTION 8: RESEARCH SCRAPER & CITATION AUTO-UPDATER
+
+### Scraper Behavior
+- On app launch: check last update timestamp
+- If > 7 days since last check: prompt user to update citations
+- Manual trigger: [Check for Updates] button in Citations tab
+
+### Sources to Scrape
+```python
+SCRAPE_SOURCES = [
+    {"name": "PubMed", "url": "https://pubmed.ncbi.nlm.nih.gov/?term=clinostat+microgravity", "type": "journal"},
+    {"name": "arXiv", "url": "https://arxiv.org/search/?query=clinostat&searchtype=all", "type": "preprint"},
+    {"name": "NASA NTRS", "url": "https://ntrs.nasa.gov/search?q=clinostat", "type": "technical"},
+    {"name": "GitHub", "url": "https://api.github.com/search/repositories?q=clinostat", "type": "code"},
+    {"name": "npj Microgravity", "url": "https://www.nature.com/npjmgrav/", "type": "journal"},
+    {"name": "IEEE Xplore", "url": "https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=clinostat", "type": "conference"},
+]
+```
+
+### Citation Format in Code
+Every formula usage in code must have inline comment:
+```javascript
+// g_vec = R * g_earth  [CITE-PHY-001: Borst & van Loon, 2009, npj Microgravity]
+```
+
+---
+
+## SECTION 9: MATHS_CALCULATIONS_README.md — REQUIRED STRUCTURE
+
+```markdown
+# ClinoSim Pro — Mathematics & Calculations Reference
+## Version: auto-updated | Last revised: [timestamp]
+
+## Table of Contents
+1. Quaternion Rotation Mathematics
+2. Gravity Vector Simulation
+3. Residual Gravity Calculation
+4. Centrifugal Force Analysis
+5. Stokes Settling Velocity
+6. Moment of Inertia
+7. PID Control Theory
+8. FFT Vibration Analysis
+9. Inertia Tensor
+10. Rotation Matrix (Euler — display only)
+
+---
+### Formula Entry Template:
+**Formula ID:** MATH-XXX
+**Name:** [Formula Name]
+**LaTeX:** $$ formula $$
+**Variables:** [variable definitions]
+**Used In:** [module name, function name]
+**Citation:** [CITE-XXX]
+**Notes:** [any special conditions, limitations]
+---
+```
+
+---
+
+## SECTION 10: QUALITY & VALIDATION REQUIREMENTS
+
+- All physics calculations must be unit-tested against known published results
+- g_residual calculation must match values from Borst & van Loon (2009) within 1%
+- 3D rotation must be validated against quaternion test vectors (known input → known output)
+- Motor PID must achieve steady-state within 3 seconds for step input
+- Packet loss must be flagged within 2 missed heartbeats
+- CSV output must be importable into MATLAB, Python, Excel without modification
+- STL export must be watertight (no open edges) — validate with Three.js geometry checker
+- App must run at minimum 30fps on mid-range laptop (Intel Core i5, 8GB RAM)
+- Memory usage must not exceed 1GB during 24-hour continuous operation
+
+---
+
+## SECTION 11: BUILD ORDER (STRICTLY FOLLOW)
+
+1. `CITATIONS.md` — seed with 20+ known clinostat references
+2. `MATHS_CALCULATIONS_README.md` — all formulas from Section 4
+3. Backend: `physics_engine.py` — all physics functions with unit tests
+4. Backend: `motor_driver.py` — Ethernet communication layer
+5. Frontend: `main.css` — design system, CSS variables, typography
+6. Frontend: `viewer3d.js` — Three.js scene setup, camera, lighting
+7. Frontend: `clinostat1d.js` — 1D geometry builder
+8. Frontend: `clinostat2d.js` — 2D geometry builder
+9. Frontend: `clinostat3d.js` — 3D wireframe scaffold only
+10. Frontend: `gravity_vector.js` + `residual_g.js` — physics JS layer
+11. Frontend: `motor_control.js` + `ethernet.js` + `packet.js`
+12. Frontend: `live_plots.js` — all 7 charts
+13. Frontend: `logger.js` + `exporter.js`
+14. Frontend: `ui.js` — full layout assembly
+15. `main.js` — Electron bootstrap
+16. Integration testing — all modules communicating
+17. `research_scraper.py` + `citations_db.js` — citation system
+18. `3D_ARCHITECTURE.md` + `3D_ARCHITECTURE.md` Phase 2 scaffold
+19. Final UI polish — animations, micro-interactions, loading states
+20. Documentation — USER_MANUAL.md, HARDWARE_SETUP.md, API_REFERENCE.md
+
+---
+
+## FINAL DIRECTIVE TO AI
+
+You are building a professional-grade, scientifically rigorous, hardware-integrated digital twin software. Every number must trace back to a real formula. Every formula must trace back to a real citation. Every UI element must serve a real engineering purpose. Every packet must be validated. Every geometry change must be live.
+
+This software will be used by real researchers preparing a real experiment aboard a real spacecraft (PS4 mission). The ground simulation it produces must be trustworthy enough to make go/no-go decisions for spaceflight biology experiments.
+
+Do not cut corners. Do not use placeholder logic. Do not skip citations. Build it as if lives depend on it — because scientific integrity does.
+
+**Start with Phase 1: 1D and 2D Clinostat, full implementation.**
+**Scaffold Phase 2: 3D Clinostat architecture and locked UI tab.**
+**Every file gets the dual license header.**
+**Every formula gets a citation.**
+
+Build. Validate. Cite. Repeat.
+
+---
+*ClinoSim Pro Master Prompt v1.0 — Generated for PS4 Mission Ground Simulation*
+*Proprietary + Apache 2.0 Open Source Dual License*
