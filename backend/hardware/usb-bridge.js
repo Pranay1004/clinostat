@@ -3,10 +3,22 @@
  * 
  * Connects to clinostats via USB serial port
  * Handles AT commands and UART data streaming
+ * 
+ * Note: serialport is optional. Install with: npm install serialport
  */
 
-const SerialPort = require('serialport').SerialPort;
-const ReadlineParser = require('@serialport/parser-readline');
+let SerialPort, ReadlineParser;
+
+try {
+  const serialport = require('serialport');
+  const { ReadlineParser: RL } = require('@serialport/parser-readline');
+  SerialPort = serialport.SerialPort;
+  ReadlineParser = RL;
+} catch (e) {
+  console.warn('⚠️  serialport not installed. USB serial connections will not work.');
+  console.warn('   To enable: npm install serialport @serialport/parser-readline');
+}
+
 const EventEmitter = require('events');
 
 class USBBridge extends EventEmitter {
@@ -30,6 +42,10 @@ class USBBridge extends EventEmitter {
    * Connect to clinostat via USB serial
    */
   async connect() {
+    if (!SerialPort) {
+      throw new Error('serialport module not installed. Run: npm install serialport @serialport/parser-readline');
+    }
+
     return new Promise((resolve, reject) => {
       this.serialPort = new SerialPort({
         path: this.port,

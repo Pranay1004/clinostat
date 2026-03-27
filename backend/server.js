@@ -73,6 +73,8 @@ app.get('/api/devices/discover', async (req, res) => {
   
   // TODO: Scan local network for clinostats
   // Query mDNS, ping common ranges, check Bluetooth peripherals
+  // Note: Hardware bridges require serialport/noble packages
+  // Install them locally with: npm install serialport noble @serialport/parser-readline
   
   res.json({
     devices: [
@@ -81,17 +83,11 @@ app.get('/api/devices/discover', async (req, res) => {
         type: 'WiFi',
         ip: '192.168.1.100',
         name: 'ClinoStat-Lab-1',
-        status: 'online',
+        status: 'offline (waiting for hardware)',
         lastSeen: new Date()
-      },
-      {
-        id: 'serial_001',
-        type: 'USB-Serial',
-        port: '/dev/ttyUSB0',
-        name: 'ClinoStat-USB',
-        status: 'connected'
       }
     ],
+    notice: 'For hardware connections, install optional dependencies: npm install serialport noble',
     timestamp: new Date()
   });
 });

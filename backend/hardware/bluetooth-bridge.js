@@ -3,9 +3,19 @@
  * 
  * Connects to clinostats via Bluetooth Low Energy (BLE)
  * Handles GATT service discovery and characteristic reads/writes
+ * 
+ * Note: noble is optional. Install with: npm install noble
  */
 
-const noble = require('noble');
+let noble;
+
+try {
+  noble = require('noble');
+} catch (e) {
+  console.warn('⚠️  noble (Bluetooth) not installed. BLE connections will not work.');
+  console.warn('   To enable: npm install noble');
+}
+
 const EventEmitter = require('events');
 
 class BluetoothBridge extends EventEmitter {
@@ -21,6 +31,10 @@ class BluetoothBridge extends EventEmitter {
    * Scan for nearby Bluetooth devices
    */
   async scan(timeout = 10000) {
+    if (!noble) {
+      throw new Error('noble module not installed. Run: npm install noble');
+    }
+
     return new Promise((resolve) => {
       const devices = [];
 
