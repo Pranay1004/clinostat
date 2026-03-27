@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://clinosim-backend.railway.app/api/:path*"
+      "destination": "https://clinostat-production.up.railway.app/api/:path*"
     }
   ]
 }
