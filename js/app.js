@@ -340,8 +340,13 @@ function setCameraView(view) {
 // ═══════════════════════════════════════════════════════════════════════
 // CHART.JS LIVE PLOTS
 // ═══════════════════════════════════════════════════════════════════════
-let chartGRes, chartRPM, chartPower, chartGVec, chartGMag;
+let chartFFT;
 const MAX_PLOT_POINTS = 200;
+
+// Signal history for FFT
+const FFT_WINDOW = 256;
+const fftBuffer = [];
+let fftNextUpdateAt = 0;
 
 function createChart(canvasId, config) {
     const ctx = document.getElementById(canvasId);
@@ -360,89 +365,76 @@ function initCharts() {
         }
     };
 
-    // g-Residual
-    chartGRes = createChart('chart-gres', {
+    // FFT Spectrum (computed from g-residual history)
+    chartFFT = createChart('chart-fft', {
         type: 'line',
         data: {
             labels: [],
             datasets: [{
-                label: 'g-Residual %',
+                label: 'Magnitude',
                 data: [],
                 borderColor: COLORS.CYAN,
-                backgroundColor: 'rgba(0,212,255,0.1)',
-                fill: true,
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.3
-            }]
-        },
-        options: { ...commonOpts, scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, min: 0, suggestedMax: 100 } } }
-    });
-
-    // RPM
-    chartRPM = createChart('chart-rpm', {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [
-                { label: 'A1 Sp', data: [], borderColor: 'rgba(0,212,255,0.4)', borderWidth: 1, borderDash: [4,2], pointRadius: 0, tension: 0.1 },
-                { label: 'A1 Act', data: [], borderColor: COLORS.CYAN, borderWidth: 1.5, pointRadius: 0, tension: 0.1 },
-                { label: 'A2 Sp', data: [], borderColor: 'rgba(0,255,136,0.4)', borderWidth: 1, borderDash: [4,2], pointRadius: 0, tension: 0.1 },
-                { label: 'A2 Act', data: [], borderColor: COLORS.GREEN, borderWidth: 1.5, pointRadius: 0, tension: 0.1 }
-            ]
-        },
-        options: { ...commonOpts, scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, min: 0 } } }
-    });
-
-    // Power
-    chartPower = createChart('chart-power', {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Total Power',
-                data: [],
-                borderColor: COLORS.AMBER,
-                backgroundColor: 'rgba(255,179,0,0.1)',
-                fill: true,
-                borderWidth: 1.5,
-                pointRadius: 0,
-                tension: 0.3
-            }]
-        },
-        options: { ...commonOpts, scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, min: 0, beginAtZero: true } } }
-    });
-
-    // Gravity Vector components
-    chartGVec = createChart('chart-gvec', {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [
-                { label: 'gx', data: [], borderColor: '#FF6666', borderWidth: 1.2, pointRadius: 0, tension: 0.1 },
-                { label: 'gy', data: [], borderColor: '#66FF66', borderWidth: 1.2, pointRadius: 0, tension: 0.1 },
-                { label: 'gz', data: [], borderColor: '#6666FF', borderWidth: 1.2, pointRadius: 0, tension: 0.1 }
-            ]
-        },
-        options: { ...commonOpts }
-    });
-
-    // g Magnitude
-    chartGMag = createChart('chart-gmag', {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: '|g|',
-                data: [],
-                borderColor: COLORS.WHITE,
                 borderWidth: 1.5,
                 pointRadius: 0,
                 tension: 0.1
             }]
         },
-        options: { ...commonOpts }
+        options: {
+            ...commonOpts,
+            plugins: {
+                ...commonOpts.plugins,
+                legend: { ...commonOpts.plugins.legend, display: false }
+            },
+            scales: {
+                x: { ...commonOpts.scales.x, title: { display: true, text: 'Hz', color: '#556677', font: { size: 9 } } },
+                y: { ...commonOpts.scales.y, title: { display: true, text: 'arb', color: '#556677', font: { size: 9 } }, min: 0 }
+            }
+        }
     });
+}
+
+function computeDFT(signal, sampleRate) {
+    const N = signal.length;
+    const half = Math.floor(N / 2);
+    const mags = new Array(half).fill(0);
+    const freqs = new Array(half).fill(0);
+    for (let k = 0; k < half; k++) {
+        let re = 0;
+        let im = 0;
+        const w = TWO_PI * k / N;
+        for (let n = 0; n < N; n++) {
+            const a = w * n;
+            re += signal[n] * Math.cos(a);
+            im -= signal[n] * Math.sin(a);
+        }
+        mags[k] = Math.sqrt(re * re + im * im) / N;
+        freqs[k] = (k * sampleRate) / N;
+    }
+    return { freqs, mags };
+}
+
+function updateFFT() {
+    if (!chartFFT) return;
+    if (fftBuffer.length < FFT_WINDOW) return;
+
+    // Detrend (remove mean)
+    const mean = fftBuffer.reduce((s, v) => s + v, 0) / fftBuffer.length;
+    const x = fftBuffer.map(v => v - mean);
+    const sampleRate = 1 / (STATE.physDt * PLOT_INTERVAL);
+    const { freqs, mags } = computeDFT(x, sampleRate);
+
+    // Display up to ~5 Hz (clinostat-scale)
+    const maxHz = 5;
+    const labels = [];
+    const data = [];
+    for (let i = 0; i < freqs.length; i++) {
+        if (freqs[i] > maxHz) break;
+        labels.push(freqs[i].toFixed(2));
+        data.push(mags[i]);
+    }
+    chartFFT.data.labels = labels;
+    chartFFT.data.datasets[0].data = data;
+    chartFFT.update('none');
 }
 
 function pushChartData(chart, label, ...values) {
@@ -555,22 +547,18 @@ function animate(timestamp) {
     // Update UI readouts
     updateReadouts();
 
-    // Update plots (throttled)
+    // Update FFT (throttled)
     plotUpdateCounter++;
     if (plotUpdateCounter >= PLOT_INTERVAL && STATE.running) {
         plotUpdateCounter = 0;
-        const t = STATE.time.toFixed(1);
-        pushChartData(chartGRes, t, STATE.gResPercent);
-        pushChartData(chartRPM, t,
-            Math.abs(STATE.rpmSet[0]), Math.abs(STATE.rpmActual[0]),
-            Math.abs(STATE.rpmSet[1]), Math.abs(STATE.rpmActual[1])
-        );
-        // Simulated power (P = I²R proxy: proportional to RPM²)
-        const power = STATE.rpmActual.reduce((s, r) => s + Math.abs(r) * 0.15, 0);
-        pushChartData(chartPower, t, power);
-        pushChartData(chartGVec, t, STATE.gVec[0], STATE.gVec[1], STATE.gVec[2]);
-        const gMag = Math.sqrt(STATE.gVec[0]**2 + STATE.gVec[1]**2 + STATE.gVec[2]**2);
-        pushChartData(chartGMag, t, gMag);
+
+        fftBuffer.push(STATE.gResPercent);
+        while (fftBuffer.length > FFT_WINDOW) fftBuffer.shift();
+
+        if (STATE.time >= fftNextUpdateAt) {
+            fftNextUpdateAt = STATE.time + 1.0;
+            updateFFT();
+        }
     }
 
     // Data logging
@@ -585,6 +573,11 @@ function animate(timestamp) {
     // Session timer
     if (STATE.running) {
         updateSessionTimer();
+    }
+
+    // Point probe live updates
+    if (STATE.probeActive) {
+        calcPointProbe();
     }
 }
 
@@ -985,6 +978,21 @@ function bindEvents() {
     document.querySelectorAll('input[name="rotation-mode"]').forEach(radio => {
         radio.addEventListener('change', e => {
             STATE.rotMode = e.target.value;
+
+            // Link Rotation Mode to motor behavior
+            if (STATE.rotMode === 'OPTIMIZED') {
+                STATE.autoGolden = true;
+                const ag = document.getElementById('auto-golden');
+                if (ag) ag.checked = true;
+                if (STATE.mode === '2D') {
+                    STATE.rpmSet[1] = STATE.rpmSet[0] * PHI;
+                    $('rpm2-slider').value = STATE.rpmSet[1];
+                    $('rpm2-input').value = STATE.rpmSet[1].toFixed(2);
+                }
+            }
+            if (STATE.rotMode === 'RANDOM_WALK') {
+                STATE.rwTimer = 0;
+            }
             showToast(`Rotation mode: ${STATE.rotMode}`, 'info');
         });
     });
@@ -1073,7 +1081,13 @@ function bindEvents() {
         STATE.probeActive = e.target.checked;
         if (!STATE.probeActive) {
             $('probe-results').style.display = 'none';
+            return;
         }
+        // Ensure latest input values are used
+        STATE.probeX = parseFloat($('probe-x').value) || 0;
+        STATE.probeY = parseFloat($('probe-y').value) || 0;
+        STATE.probeZ = parseFloat($('probe-z').value) || 0;
+        calcPointProbe();
     });
 
     // ─── About Button ───
@@ -1112,13 +1126,14 @@ function resetSimulation() {
     STATE.physAccum = 0;
     STATE.rwTimer = 0;
 
-    // Clear charts
-    [chartGRes, chartRPM, chartPower, chartGVec, chartGMag].forEach(c => {
-        if (!c) return;
-        c.data.labels = [];
-        c.data.datasets.forEach(ds => ds.data = []);
-        c.update('none');
-    });
+    // Clear FFT
+    fftBuffer.length = 0;
+    fftNextUpdateAt = 0;
+    if (chartFFT) {
+        chartFFT.data.labels = [];
+        chartFFT.data.datasets.forEach(ds => ds.data = []);
+        chartFFT.update('none');
+    }
 
     showToast('Simulation reset', 'info');
 }
