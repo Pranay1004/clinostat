@@ -1,0 +1,159 @@
+/* ClinoSim Pro — Light Theme (Microsoft / Fluent-inspired)
+   IMPORTANT: This file only overrides visuals. It must not affect simulation logic or 3D processing.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+
+:root[data-theme="light"] {
+  --mica-bg:#f3f3f3;
+  --surface:#ffffff;
+  --surface-alt:#f9f9f9;
+  --surface-card:rgba(255,255,255,0.7);
+  --acrylic:rgba(243,243,243,0.85);
+  --nav-bg:rgba(243,243,243,0.9);
+  --border:rgba(0,0,0,0.08);
+  --border-strong:rgba(0,0,0,0.14);
+  --text-primary:#1a1a1a;
+  --text-secondary:#6b6b6b;
+  --text-dim:#6b6b6b;
+  --text-disabled:#acacac;
+
+  --electric-cyan:#0067c0;
+  --plasma-blue:#0067c0;
+  --deep-blue:#005ba5;
+  --alert-amber:#c19c00;
+  --danger-red:#c42b1c;
+  --success-green:#107c10;
+
+  --panel-bg: var(--surface-card);
+  --panel-border: var(--border);
+  --panel-glow: rgba(0,0,0,0.02);
+
+  --font-heading:'Segoe UI',system-ui,sans-serif;
+  --font-body:'Segoe UI',system-ui,sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+:root[data-theme="light"] body {
+  background: var(--mica-bg);
+  background-image:
+    radial-gradient(ellipse at 20% 20%,rgba(0,120,212,0.04) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 80%,rgba(0,103,192,0.03) 0%,transparent 60%);
+  color: var(--text-primary);
+}
+
+/* Header -> Titlebar look */
+:root[data-theme="light"] #header {
+  height: 48px;
+  background: var(--acrylic);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+:root[data-theme="light"] .logo {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .connection-badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+:root[data-theme="light"] #left-panel {
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border);
+}
+
+:root[data-theme="light"] #right-panel {
+  background: var(--surface-alt);
+  border-left: 1px solid var(--border);
+}
+
+:root[data-theme="light"] .panel {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.06);
+  backdrop-filter: blur(10px);
+}
+
+:root[data-theme="light"] .panel-header {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+}
+
+/* Buttons */
+:root[data-theme="light"] .btn {
+  border-color: var(--border);
+}
+
+:root[data-theme="light"] .btn-primary,
+:root[data-theme="light"] .btn-success {
+  background: var(--electric-cyan);
+  border-color: var(--electric-cyan);
+  color: #fff;
+}
+
+:root[data-theme="light"] .btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .btn-ghost:hover {
+  background: rgba(0,0,0,0.05);
+  border-color: var(--border);
+}
+
+/* Inputs */
+:root[data-theme="light"] input,
+:root[data-theme="light"] select {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+/* Bottom plot strip -> Fluent surface */
+:root[data-theme="light"] #plot-strip {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+:root[data-theme="light"] .bottom-tabs {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+:root[data-theme="light"] .bottom-tab {
+  color: var(--text-secondary);
+  border-bottom-color: transparent;
+}
+
+:root[data-theme="light"] .bottom-tab.active {
+  color: var(--electric-cyan);
+  border-bottom-color: var(--electric-cyan);
+}
+
+:root[data-theme="light"] .plot-container {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:root[data-theme="light"] .plot-title {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+/* Chart.js defaults (light) via CSS vars used by app.js configs */
+:root[data-theme="light"] .text-dim,
+:root[data-theme="light"] .readout-label {
+  color: var(--text-secondary);
+}
