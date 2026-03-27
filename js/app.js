@@ -340,7 +340,7 @@ function setCameraView(view) {
 // ═══════════════════════════════════════════════════════════════════════
 // CHART.JS LIVE PLOTS
 // ═══════════════════════════════════════════════════════════════════════
-let chartFFT;
+let chartGResTime, chartFFT, chartRPM, chartGVec, chartAngles;
 const MAX_PLOT_POINTS = 200;
 
 // Signal history for FFT
@@ -365,6 +365,30 @@ function initCharts() {
         }
     };
 
+    // g-Residual Time Series
+    chartGResTime = createChart('chart-gres-time', {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'g-Residual',
+                data: [],
+                borderColor: COLORS.CYAN,
+                borderWidth: 1.5,
+                pointRadius: 0,
+                tension: 0.2,
+                fill: false
+            }]
+        },
+        options: {
+            ...commonOpts,
+            scales: {
+                x: { ...commonOpts.scales.x, title: { display: true, text: 'Time (s)', color: '#556677', font: { size: 9 } } },
+                y: { ...commonOpts.scales.y, title: { display: true, text: '% of g₀', color: '#556677', font: { size: 9 } }, min: 0, max: 100 }
+            }
+        }
+    });
+
     // FFT Spectrum (computed from g-residual history)
     chartFFT = createChart('chart-fft', {
         type: 'line',
@@ -388,6 +412,156 @@ function initCharts() {
             scales: {
                 x: { ...commonOpts.scales.x, title: { display: true, text: 'Hz', color: '#556677', font: { size: 9 } } },
                 y: { ...commonOpts.scales.y, title: { display: true, text: 'arb', color: '#556677', font: { size: 9 } }, min: 0 }
+            }
+        }
+    });
+
+    // RPM Tracking (actual vs set)
+    chartRPM = createChart('chart-rpm', {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'RPM Set X',
+                    data: [],
+                    borderColor: COLORS.BLUE,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2,
+                    borderDash: [5, 5]
+                },
+                {
+                    label: 'RPM Actual X',
+                    data: [],
+                    borderColor: COLORS.BLUE,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: 'RPM Set Y',
+                    data: [],
+                    borderColor: COLORS.GREEN,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2,
+                    borderDash: [5, 5]
+                },
+                {
+                    label: 'RPM Actual Y',
+                    data: [],
+                    borderColor: COLORS.GREEN,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: 'RPM Set Z',
+                    data: [],
+                    borderColor: COLORS.AMBER,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2,
+                    borderDash: [5, 5]
+                },
+                {
+                    label: 'RPM Actual Z',
+                    data: [],
+                    borderColor: COLORS.AMBER,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                }
+            ]
+        },
+        options: {
+            ...commonOpts,
+            scales: {
+                x: { ...commonOpts.scales.x, title: { display: true, text: 'Time (s)', color: '#556677', font: { size: 9 } } },
+                y: { ...commonOpts.scales.y, title: { display: true, text: 'RPM', color: '#556677', font: { size: 9 } } }
+            }
+        }
+    });
+
+    // Gravity Vector Components
+    chartGVec = createChart('chart-gvec', {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Gx',
+                    data: [],
+                    borderColor: COLORS.BLUE,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: 'Gy',
+                    data: [],
+                    borderColor: COLORS.GREEN,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: 'Gz',
+                    data: [],
+                    borderColor: COLORS.AMBER,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                }
+            ]
+        },
+        options: {
+            ...commonOpts,
+            scales: {
+                x: { ...commonOpts.scales.x, title: { display: true, text: 'Time (s)', color: '#556677', font: { size: 9 } } },
+                y: { ...commonOpts.scales.y, title: { display: true, text: 'm/s²', color: '#556677', font: { size: 9 } } }
+            }
+        }
+    });
+
+    // Orientation Angles (Roll, Pitch, Yaw)
+    chartAngles = createChart('chart-angles', {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Roll',
+                    data: [],
+                    borderColor: COLORS.BLUE,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: 'Pitch',
+                    data: [],
+                    borderColor: COLORS.GREEN,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: 'Yaw',
+                    data: [],
+                    borderColor: COLORS.AMBER,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.2
+                }
+            ]
+        },
+        options: {
+            ...commonOpts,
+            scales: {
+                x: { ...commonOpts.scales.x, title: { display: true, text: 'Time (s)', color: '#556677', font: { size: 9 } } },
+                y: { ...commonOpts.scales.y, title: { display: true, text: '°', color: '#556677', font: { size: 9 } } }
             }
         }
     });
@@ -449,6 +623,57 @@ function pushChartData(chart, label, ...values) {
         chart.data.datasets.forEach(ds => ds.data.shift());
     }
     chart.update('none'); // no animation
+}
+
+// ─── Chart Update Functions ───
+function getEulerAngles(quat) {
+    // Convert quaternion to Euler angles (Roll, Pitch, Yaw) in degrees
+    const q = quat;
+    const test = q.x * q.y + q.z * q.w;
+    
+    let roll, pitch, yaw;
+    
+    if (test > 0.499) { // singularity at north pole
+        yaw = 2 * Math.atan2(q.x, q.w) * DEG;
+        pitch = 90;
+        roll = 0;
+    } else if (test < -0.499) { // singularity at south pole
+        yaw = -2 * Math.atan2(q.x, q.w) * DEG;
+        pitch = -90;
+        roll = 0;
+    } else {
+        const sqx = q.x * q.x;
+        const sqy = q.y * q.y;
+        const sqz = q.z * q.z;
+        yaw = Math.atan2(2 * q.y * q.w - 2 * q.x * q.z, 1 - 2 * sqy - 2 * sqz) * DEG;
+        pitch = Math.asin(2 * test) * DEG;
+        roll = Math.atan2(2 * q.x * q.w - 2 * q.y * q.z, 1 - 2 * sqx - 2 * sqz) * DEG;
+    }
+    
+    return { roll, pitch, yaw };
+}
+
+function updateAllCharts(timeLabel) {
+    // Update g-Residual time series
+    pushChartData(chartGResTime, timeLabel, STATE.gResPercent);
+    
+    // Update RPM tracking chart (actual vs set)
+    pushChartData(chartRPM, timeLabel, 
+        STATE.rpmSet[0], STATE.rpmActual[0],
+        STATE.rpmSet[1], STATE.rpmActual[1],
+        STATE.rpmSet[2], STATE.rpmActual[2]
+    );
+    
+    // Update gravity vector chart
+    pushChartData(chartGVec, timeLabel, 
+        STATE.gVec[0], STATE.gVec[1], STATE.gVec[2]
+    );
+    
+    // Update orientation angles chart
+    const angles = getEulerAngles(STATE.orientation);
+    pushChartData(chartAngles, timeLabel, 
+        angles.roll, angles.pitch, angles.yaw
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -554,6 +779,10 @@ function animate(timestamp) {
 
         fftBuffer.push(STATE.gResPercent);
         while (fftBuffer.length > FFT_WINDOW) fftBuffer.shift();
+
+        // Update all charts with current data
+        const timeLabel = (STATE.time).toFixed(1);
+        updateAllCharts(timeLabel);
 
         if (STATE.time >= fftNextUpdateAt) {
             fftNextUpdateAt = STATE.time + 1.0;
@@ -1039,7 +1268,15 @@ function bindEvents() {
             document.querySelectorAll('.bottom-tab-content').forEach(c => c.classList.remove('active'));
             tab.classList.add('active');
             const content = document.querySelector(`[data-tab-content="${tab.dataset.tab}"]`);
-            if (content) content.classList.add('active');
+            if (content) {
+                content.classList.add('active');
+                // Resize charts to fit new container
+                setTimeout(() => {
+                    [chartGResTime, chartFFT, chartRPM, chartGVec, chartAngles].forEach(chart => {
+                        if (chart && chart.resize) chart.resize();
+                    });
+                }, 0);
+            }
         });
     });
 

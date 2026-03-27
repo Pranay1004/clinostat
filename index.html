@@ -290,15 +290,51 @@
             <!-- Bottom Plot Strip -->
             <div id="plot-strip">
                 <div class="bottom-tabs">
+                    <button class="bottom-tab active" data-tab="gres-time">g-Residual</button>
                     <button class="bottom-tab" data-tab="fft">FFT Spectrum</button>
+                    <button class="bottom-tab" data-tab="rpm">RPM Tracking</button>
+                    <button class="bottom-tab" data-tab="gvec">Gravity Vector</button>
+                    <button class="bottom-tab" data-tab="angles">Orientation</button>
                     <button class="bottom-tab" data-tab="stokes">Stokes Analysis</button>
                 </div>
 
+                <!-- g-Residual Time Series Tab -->
+                <div class="bottom-tab-content active" data-tab-content="gres-time">
+                    <div class="plot-container" style="flex:1">
+                        <span class="plot-title">g-Residual (% of g₀)</span>
+                        <canvas id="chart-gres-time"></canvas>
+                    </div>
+                </div>
+
                 <!-- FFT Tab -->
-                <div class="bottom-tab-content active" data-tab-content="fft">
+                <div class="bottom-tab-content" data-tab-content="fft">
                     <div class="plot-container" style="flex:1">
                         <span class="plot-title">FFT Spectrum (g-residual)</span>
                         <canvas id="chart-fft"></canvas>
+                    </div>
+                </div>
+
+                <!-- RPM Tracking Tab -->
+                <div class="bottom-tab-content" data-tab-content="rpm">
+                    <div class="plot-container" style="flex:1">
+                        <span class="plot-title">RPM Actual vs Set</span>
+                        <canvas id="chart-rpm"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gravity Vector Components Tab -->
+                <div class="bottom-tab-content" data-tab-content="gvec">
+                    <div class="plot-container" style="flex:1">
+                        <span class="plot-title">Gravity Vector (m/s²)</span>
+                        <canvas id="chart-gvec"></canvas>
+                    </div>
+                </div>
+
+                <!-- Orientation Angles Tab -->
+                <div class="bottom-tab-content" data-tab-content="angles">
+                    <div class="plot-container" style="flex:1">
+                        <span class="plot-title">Orientation (degrees)</span>
+                        <canvas id="chart-angles"></canvas>
                     </div>
                 </div>
 
